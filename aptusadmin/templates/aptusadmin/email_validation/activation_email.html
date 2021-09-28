@@ -1,0 +1,10 @@
+{% autoescape off %}
+Cher {{ user.get_full_name }},
+
+Votre email {{ user.email }} doit être confirmé pour pouvoir réinitialiser votre mot de passe en cas d'oubli.
+
+Pour confirmer l'email  utilisez ce lien:
+http://{{ domain }}{% url 'aptusadmin:activate_mail_adress' uidb64=uid token=token mailb64=mail tcdb64=token_creation_date %}
+
+Cordialement,
+{% endautoescape %}

@@ -1,0 +1,7 @@
+env/
+*__pycache__/
+*static/
+*media/
+monSite/
+jimweb/jimapp/templates/jimapp/brouillons
+rasa-webchat

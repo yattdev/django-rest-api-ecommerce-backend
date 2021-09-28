@@ -1,0 +1,120 @@
+{% extends parent_template %}
+{% load staticfiles %}
+{% load aptusadmin_filter %}
+{%block utilisateurs%} class="dropdown active" {%endblock%}
+
+{% block btn_autre_action %}
+    <div class="btn-gr-ap">
+
+        <a  id="reinitialiser_password" class="btn btn-info btn-outline">
+            <i class="fa fa-refresh"></i> Rénitialiser le mot de passe
+        </a>
+
+        {%if can_take_identity %}
+            <a id="btn_take_identity" class="btn btn-info">
+                <i class="fa fa-user"></i> Prendre l'identité
+            </a>
+        {% endif %}
+
+    </div>
+{% endblock btn_autre_action %}
+
+{%block main_form%}
+    <div class="col-sm-6">
+                                             
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Identifiant</label>
+            <div class="col-sm-8 bar-left">{{instance.username|default:"--------" }}</div>
+        </div> 
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Nom</label>
+            <div class="col-sm-8 bar-left">{{instance.last_name|default:"--------" }}</div>
+        </div> 
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Prénom</label>
+            <div class="col-sm-8 bar-left">{{instance.first_name|default:"--------" }}</div>
+        </div> 
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Adresse électronique</label>
+            <div class="col-sm-8 bar-left">{{instance.email|default:"--------" }} {% if instance.email and not instance.email_is_valid %} <span style="" class="label label-danger">Non Vérifiée</span> {% endif %}</div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Compte Google</label>
+            <div class="col-sm-8 bar-left">{{instance.google_account|default_if_none:"--------" }}</div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Compte Microsoft</label>
+            <div class="col-sm-8 bar-left">{{instance.microsoft_account|default_if_none:"--------" }}</div>
+        </div>
+    </div> 
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Actif</label>
+            <div class="col-sm-8 bar-left">{%if instance.is_active == True %} Oui {%else%} Non {%endif%}</div>
+        </div>
+        {%if instance.must_change_pwd%}
+            <div class="form-group">
+                <label class="col-sm-4 control-label">Mot de passe temporaire</label>
+                <div class="col-sm-8 bar-left"> {{instance.tmp_pwd}}</div>
+            </div>
+        {%endif%}
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Groupes</label>
+            <div class="col-sm-8 bar-left">
+                {%if instance.get_customgroups%}
+                    {% for elt in instance.get_customgroups %} 
+                        <a href="{%url 'aptusadmin:groupe_consulter' elt.id%}">{{elt}}</a> <br>
+                    {%endfor%}
+                {%else%}
+                    --- 
+                {%endif%}
+           </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Permissions</label>
+            <div class="col-sm-8 bar-left"> 
+                {%if instance.get_permissions%}
+                    {%for elt in instance.get_permissions%}
+                        {{elt}} <br>
+                    {%endfor%}
+                {%else%}
+                    ---
+                {%endif%}
+            </div>
+        </div>
+     </div>
+{%endblock%}
+
+{% block autre_script %}
+    <script>
+        $(document).ready(function() {
+            $('#btn_take_identity').click(function() {
+
+                $('#myform').append('<input type="hidden" name="action" value="take_identity">');
+                $('#myform').submit();
+
+            });
+        });
+    </script>
+
+    <script>
+        $("#reinitialiser_password").click(function() {
+            swal({
+                  title: "Voulez-vous réinitialiser le mot de passe ?",
+                  text: null,
+                  type:null,
+                  confirmButtonText: "Valider",
+                  cancelButtonText: "Annuler",
+                  confirmButtonColor: "#02b6b7",
+                  showCancelButton: true,
+                  closeOnConfirm: true,
+                  showLoaderOnConfirm: false,
+                },
+                function(){
+                    $('#myform').append('<input type="hidden" name="action" value="Reinitialiser_password">');
+                    $('#myform').submit()
+                }
+            );
+        });
+    </script>
+{% endblock autre_script %}

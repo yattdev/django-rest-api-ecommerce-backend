@@ -1,0 +1,69 @@
+{% extends parent_template %}
+{% load aptusadmin_filter %}
+{%block recherche%}placeholder="Recherche par nom ..."{%endblock%}
+
+{% block autre_style %}
+    #filterform .form-group:nth-child(4) {
+        width: 80%;
+        float: left;
+    }
+    #filterform .form-group:nth-child(5) {
+        width: 15%;
+        margin-left: 5%;
+        float: right;
+        margin-top: 27px;
+    }
+{% endblock autre_style %}
+
+{%block table%}
+  
+    <thead>
+        <tr> 
+            <th id="checkbox-ap" nowrap="nowrap"><input id="select_all" type="checkbox" ></th>
+            <th nowrap="nowrap" style="color:white;"  class="bar-left">Nom</th>
+            <th nowrap="nowrap" style="color:white;"  class="bar-left">Prénom</th>
+            <th nowrap="nowrap" style="color:white;"  >Identifiant</th>
+            <th nowrap="nowrap" style="color:white;"  class="bar-left">Groupes</th>
+         </tr>  
+    </thead>
+    <tbody  class="searchable">
+        {% for elt in queryset %}
+        <tr>
+            <td class="checkbox-ap"nowrap="nowrap"><input name="Choix[]"   type="checkbox"   value="{{elt.id}}"  class="checkbox"></td>
+             
+            <td nowrap="nowrap" role="button" onclick='location.href= "{{request.get_full_path|addname:elt.id}}"'>{{elt.last_name}}</td>
+            <td nowrap="nowrap" role="button" onclick='location.href= "{{request.get_full_path|addname:elt.id}}"'>{{elt.first_name}}</td>
+            <td nowrap="nowrap" role="button" onclick='location.href= "{{request.get_full_path|addname:elt.id}}"'>{{elt.username}}</td>
+            <td nowrap="nowrap" role="button" onclick='location.href= "{{request.get_full_path|addname:elt.id}}"'>{{elt|customgroups}}</td>
+        </tr>	
+        {%endfor%}
+    </tbody>
+{%endblock%}
+
+{% block autre_script_liste %}
+
+    <script>
+        $("#recherche").keydown(function(event) {
+        if (event.keyCode == 13) {
+            if ($(this).val() != '') {
+                window.location='?nom='+$(this).val()
+            }
+        }
+        });
+        $(document).ready(function(e) {
+			$('.re_avan').bind("keydown click",function() {
+				var tab=[]
+                    if(event.keyCode == 13 || $(this).is('button') ){
+                             
+                            if(tab.length!=0){
+                                var r="?"+tab.join("&")
+                                window.location=r
+                            }
+                            if(tab.length==0){
+                                window.location="{% url 'aptusadmin:utilisateurs'%}"
+                            }
+                        }
+					})
+            });
+    </script>   
+{% endblock autre_script_liste %}

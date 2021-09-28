@@ -1,0 +1,82 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const ctx = document.getElementById('myChart').getContext('2d');
+
+        // Sample data
+        const chartData = {{ chart_data | safe }};
+
+        // Parse the dates to JS
+        chartData.forEach((d) => {
+            d.x = new Date(d.date);
+        });
+
+        // Render the chart
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                datasets: [
+                    {
+                        label: 'Nombre des commandes',
+                        data: chartData,
+                        backgroundColor: 'rgb(58, 187, 194, 0.5)',
+                        borderColor: 'rgb(58, 187, 194)',
+                        borderWidth: 1,
+                        // lineTension: 0,
+                    },
+                ],
+            },
+            options: {            
+                responsive: true,
+                scales: {
+                    xAxes: [
+                        {
+                            type: 'time',
+                                time: {
+                                unit: 'day',
+                                round: 'day',
+                                displayFormats: {
+                                    day: 'DD MMM',
+                                },
+                            },
+                        },
+                    ],
+                    yAxes: [
+                        {
+                            ticks: {
+                                beginAtZero: true,
+                                userCallback: function(label, index, labels) {
+                                    if (Math.floor(label) === label) {
+                                        return label;
+                                    }
+                                },
+                            },
+                        },
+                    ],
+                },
+            },
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+{% block content_title %}{% endblock %}
+<!-- Render our chart -->
+<div style="width: 80%;">
+    <canvas style="margin-bottom: 30px; width: 60%; height: 50%;" id="myChart"></canvas>
+</div>
+<style>
+    #myChart {
+        padding: 30px 0;
+    }
+</style>
+<!-- Render the rest of the ChangeList view -->
+{{ block.super }}
+{% endblock %}

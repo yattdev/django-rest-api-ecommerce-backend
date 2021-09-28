@@ -1,0 +1,355 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <style>
+	        [role="button"] {cursor: pointer;}
+            @media (max-width: 768px) {
+                .m-hidden {
+                    display: none;
+                }
+
+                .ibox-content {
+                    margin-top: 150px;
+                }
+            }
+
+            .applications {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-around;
+            }
+
+            .applications .application {
+                width: 250px;
+                min-width: 228px;
+                border: 1px solid #e5e5e5;
+                margin: 5px;
+                padding: 10px;
+                border-radius: 5px;
+            }
+            .applications .application:hover {
+                background-color: #e5e5e5;
+                border-color: #e5e5e5;
+            }
+
+            .applications .application a {
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .cursor-over {
+                position: relative;
+            }
+            .cursor-over::after {
+                content: '\f245';
+                font-family: FontAwesome;
+                position: absolute;
+                font-size: .5em;
+                -webkit-text-stroke: .03em #fff;
+                left: 60%;
+                top: 55%;
+            }
+
+            .applications .application.educat_app i {
+                color: #02b6b7;
+            }
+            .applications .application.espaceenseignant_app i {
+                color: rgb(46, 124, 235);
+            }
+            .applications .application.enseignant_app i {
+                color: rgb(9, 197, 87);
+            }
+            .applications .application.myapps_app i {
+                color: rgb(248, 172, 32);
+            }
+            .applications .application.espace_etudiant_app i {
+                color: #4b6c9d;
+            }
+            .applications .application:hover {
+                background-color: #ddd;
+                border-color: #ddd;
+            }
+	    </style>
+	    <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>APTUS Solutions de gestion</title>
+	 
+        <link rel="icon" type="image/png" href="{% static 'aptusadmin/favicon.png' %}">
+ 	    <link href="{% static 'aptusadmin/css/bootstrap-example.css' %}" rel="stylesheet">
+        <link href="{% static 'aptusadmin/css/bootstrap.min.css' %}" rel="stylesheet">
+		<link href="{% static 'aptusadmin/font-awesome-4.7.0/css/font-awesome.min.css' %}" rel="stylesheet">
+		<link href="{% static 'aptusadmin/css/animate.css' %}" rel="stylesheet">
+        <link href="{% static 'aptusadmin/css/style.css' %}" rel="stylesheet">
+	    <link href="{% static 'aptusadmin/css/prettify.css' %}" rel="stylesheet">
+	    <link href="{% static 'aptusadmin/css/plugins/chosen/chosen.css' %}" rel="stylesheet">
+	    <link href="{% static 'aptusadmin/css/bootstrap-multiselect.css' %}" rel="stylesheet">
+	    <link href="{% static 'aptusadmin/css/plugins/sweetalert/sweetalert.css' %}" rel="stylesheet">
+        <link href="{% static 'aptusadmin/css/plugins/ladda/ladda-themeless.min.css' %}" rel="stylesheet">
+        <link href="{% static 'aptusadmin/css/plugins/datapicker/datepicker3.css' %}" rel="stylesheet">
+        <link href="{% static 'aptusadmin/css/plugins/select2/select2.min.css' %}" rel="stylesheet">
+        <link href="{% static 'aptusadmin/css/aptus.css' %}" rel="stylesheet">
+        <SCRIPT type="text/JavaScript">
+            function OuvrirPopup(url) { 
+            propriete = "top=0,left=0,resizable=yes, status=no, directories=no, addressbar=no, toolbar=no, scrollbars=yes, menubar=no, location=no, statusbar=no" 
+            propriete += ",width=" + screen.availWidth * (60/100) + ",height=" + screen.availHeight * (60/100); 
+            win = window.open(url,"ton_titre", propriete) 
+            } 
+        </SCRIPT>
+        <style>
+            [disabled="disabled"] {
+                color:  #ccc
+                  
+            }
+        </style>
+	</head>
+    <body class="top-navigation">
+
+        <div id="wrapper">
+            <div id="page-wrapper" class="gray-bg" >
+            <div class="row border-bottom white-bg">
+            <nav class="navbar navbar-fixed-top" role="navigation" style="border-bottom:none !important">
+
+                {% if request.session.primary_user %}
+                    <div class="bg-danger text-primary p-xs">
+                         <h4>Vous êtes connectés en tant que {{ user.get_full_name }} ({{ user.get_username }}), <a href="{% url 'aptusadmin:back_to_original_profile' %}" class="text-danger">clickez-ici</a> pour revenir à votre profil.</h4>
+                    </div>
+                {% endif %}
+
+                <div style="background-color:#3b3e3f;padding:10px;font-weight:700; display: flex; align-items: center; justify-content: space-between;">
+                    <img src="{% static 'aptusadmin/img/logo-aptus.png' %}" style="width: 80px;" alt="Aptus">
+                    <ul class="navbar-top-links navbar-right" style="font-weight:600;font-size:14px;margin-top: 3px;">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle count-info m-hidden" data-toggle="dropdown" href="#" aria-expanded="false">
+                                <i class="fa fa-envelope" style="color:white;padding:0px"></i><span class="{%if user_messages.0 > 0 %} label label-warning {%endif%}" id="nbr_messages">{%if user_messages.0 > 0 %} {{user_messages.0}} {%endif%}</span>
+                            </a>
+
+                            <ul class="dropdown-menu dropdown-messages m-hidden" id="messages" style="margin-top:12px">
+                                {%for elt in user_messages.1%}
+                                    <li onclick="location.href= '/aptusadmin/message/{{elt.id}}/?from=aptusadmin'"  role='button'>
+                                        <div class="dropdown-messages-box">
+                                             
+                                            <div class="media-body">
+                                                <strong>{{elt.subject}}</strong><br>
+                                                <small class="text-muted">{{elt.date_reception}}</small>
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li class="divider"></li>    
+                                {%endfor%}
+                                
+                                <li>
+                                    <div class="text-center link-block">
+                                        <a href="/myapps/message/">
+                                            <i class="fa fa-envelope"></i> <strong>Lire tous les messages</strong>
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="color:white;padding:0px"><i class="fa fa-user"></i> {% if user.is_authenticated %} {% if user.last_name %} {{user.last_name }} {{user.first_name }} {% else %} {{user }} {%endif%} {%endif%}<span class="caret"></span></a>
+                            <ul class="dropdown-menu" style="margin-top:12px">
+                                <li><p style="padding: 7px 20px; margin: 0; background: #ddd; color: #333; font-weight: normal; text-align: center;">Taille d'écran <span id="screen_size_cont"></span><script>document.getElementById('screen_size_cont').innerHTML = window.innerWidth + 'x' + window.innerHeight;</script></p></li>
+                                <li><a href="{%url 'aptusadmin:change_password'%}" ><i class="fa fa-unlock-alt fa-fw"></i> Modifier mon mot de passe</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{%url 'aptusadmin:deconnexion'%}?next=/{{current_appli}}"><i class="fa fa-sign-out fa-fw"></i> Quitter</a></li>
+                            </ul>
+                        </li>                    
+					</ul>    
+                </div>
+                <div class="col-sm-12 wrapper border-bottom white-bg page-heading" >
+                    <div class="row">
+                        <div class="col-sm-12">
+                        <h2 class="title" style="margin-bottom:14px;margin-top:16px">Applications</h2>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            </div>
+            <div class="wrapper wrapper-content">
+                <div class="ibox-content">
+                    {% if messages %}
+                        {% for message in messages %}                   
+                            <div class="row">
+                                <div class="col-sm-12">			
+                                    <div class="alert {{ message.tags }} alert-dismissable" >
+                                    {{message|safe}}<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                    </div> 
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <div class="applications">
+                        {% if can_access_educat %}
+                            <div class="application educat_app m-hidden">
+                                <a href="/educat">
+                                    <i class="fa fa-graduation-cap" style="font-size:75px;"></i><br>
+                                    <strong style="color:#2f4050">Espace Administration</strong>
+                                    <p style="color:#708090">Réservé à l’administration et aux<br />enseignants avec une tâche administrative.</p>
+                                </a>
+                            </div>
+                        {% endif %}
+                        {% if can_access_espace_enseignant %}
+                            <div class="application espaceenseignant_app">
+                                <a href="/espaceenseignant">
+                                    <i class="fa fa-user" style="font-size:75px;"></i><br>
+                                    <strong style="color:#2f4050">Espace Enseignant</strong>
+                                    <p style="color:#708090">Saisir les absences et les notes des étudiants</p>
+                                </a>
+                            </div>
+                        {% endif %}
+                        {% if can_access_enseignant %}
+                            <div class="application enseignant_app">
+                                <a href="/enseignant">
+                                    <i class="fa fa-leanpub cursor-over" style="font-size:75px;"></i><br>
+                                    <strong style="color:#2f4050">Educat E-Learn</strong>
+                                    <p style="color:#708090">plateforme e-learning intégrée</p>
+                                </a>
+                            </div>
+                        {% endif %}
+                        {% if can_access_espace_etudiant %}
+                            <div class="application espace_etudiant_app">
+                                <a href="/espaceetudiant">
+                                    <i class="fa fa-graduation-cap" style="font-size:75px;"></i><br>
+                                    <strong style="color:#2f4050">Espace Étudiant</strong>
+                                    <p style="color:#708090">Consulter son dossier étudiant</p>
+                                </a>
+                            </div>
+                        {% endif %}
+                        {% if can_access_myapps %}
+                            <div class="application myapps_app m-hidden">
+                                <a href="{%url 'aptusadmin:admin_home' %}">
+                                    <i class="fa fa-cogs" style="font-size:75px;"></i><br>
+                                    <strong style="color:#2f4050">Console d'administration</strong>
+                                    <p style="color:#708090">Gérer les utilisateurs, les profils<br /> les sauvegardes et le journal d’activités</p>
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+           </div>
+            <div class="footer gray-bg " style="border-top:0px">
+                <div class="pull-right">
+                    <strong>Copyright</strong> Aptus consulting 
+                </div>
+            </div>
+        </div>  
+    </div>        
+    <script src="{% static 'aptusadmin/js/jquery-2.1.1.js' %}"></script>
+	<script src="{% static 'aptusadmin/js/prettify.js' %}"></script>
+	<script src="{% static 'aptusadmin/js/bootstrap-multiselect.js' %}"></script>
+	<script src="{% static 'aptusadmin/js/bootstrap-multiselect-collapsible-groups.js' %}"></script>
+    <script src="{% static 'aptusadmin/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'aptusadmin/js/plugins/chosen/chosen.jquery.js' %}"></script>
+    <script src="{% static 'aptusadmin/js/plugins/metisMenu/jquery.metisMenu.js' %}"></script>
+    <script src="{% static 'aptusadmin/js/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
+    <!-- Custom and plugin javascript -->
+    <script src="{% static 'aptusadmin/js/inspinia.js' %}"></script>
+    <script src="{% static 'aptusadmin/js/plugins/pace/pace.min.js' %}"></script>
+	<script src="{% static 'aptusadmin/js/plugins/sweetalert/sweetalert.min.js' %}"></script>
+    <script src="{% static 'aptusadmin/js/plugins/ladda/spin.min.js' %}"></script>
+    <script src="{% static 'aptusadmin/js/plugins/ladda/ladda.min.js' %}"></script>
+    <script src="{% static 'aptusadmin/js/plugins/ladda/ladda.jquery.min.js' %}"></script>
+    <!-- Data picker -->
+    <script src="{% static 'aptusadmin/js/plugins/datapicker/bootstrap-datepicker.js' %}"></script>
+    <script src="{% static 'aptusadmin/js/bootstrap-datetimepicker.js' %}"></script>
+	<script src="{% static 'aptusadmin/js/bootstrap-datetimepicker.fr.js' %}"></script>
+
+    <!-- Select2 -->
+    <script src="{% static 'aptusadmin/js/plugins/select2/select2.full.min.js' %}"></script>
+
+    <script>
+    $(".select2_demo_1").select2();
+        $(document).ready(function(){
+            $('#data_1 .input-group.date').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true,
+				format: "dd/mm/yyyy"
+            });
+           });
+    </script>     
+	<script>       
+        var config = {
+                '.chosen-select'           : {},
+                '.chosen-select-deselect'  : {allow_single_deselect:true},
+                '.chosen-select-no-single' : {disable_search_threshold:10},
+                '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+                '.chosen-select-width'     : {width:"95%"}
+            }
+            for (var selector in config) {
+                $(selector).chosen(config[selector]);
+            }
+    </script>
+<script>
+     function FetchData() {
+               var url =  "/aptusadmin/get_nbr_message/";
+              
+             $.getJSON(url, function(models) {
+                if (models.nbr > 0) {
+                   $("#nbr_messages").addClass('label label-warning') 
+                   $("#nbr_messages").html(models.nbr) }
+             });
+         
+     
+    } 
+    setInterval(FetchData, 120000);	
+</script>
+<script>
+    
+      
+                     function FetchData2() {
+ 						  
+                             var url =  "/aptusadmin/get_message/";
+                                  
+                                 $.getJSON(url, function(models) {
+								       jsonObj =JSON.parse(models)
+                                       var li='' 
+                                       for (var i = 0; i < jsonObj.length; i++) {
+                                            var lien ='/aptusadmin/message/'+jsonObj[i].pk+'/?from=aptusadmin'
+                                            li+='<li onclick='+'"location.href='+"'"+lien+"'"+'"' + "role='button'>"+
+                                           
+                                                "<div class='dropdown-messages-box'>"+
+                                                "<div class='media-body'>"+
+                                                "<strong>"+jsonObj[i].fields["subject"]+"</strong><br>"+
+                                                "<small class='text-muted'>"+jsonObj[i].fields["date_reception"]+"</small>"+
+                                                '</div>'+
+                                                '</div>'+
+                                                '</li>'+
+                                                '<li class="divider"></li>'
+                                        }
+                                    li+='<li><div class="text-center link-block">'+'<a href="/aptusadmin/message/?from=aptusadmin"><i class="fa fa-envelope"></i> <strong>Lire tous les messages</strong></a></di</li>'
+                                      $("#messages").html(li);
+									  
+ 									 
+                                 });
+                     }
+                     setInterval(FetchData2, 120000);	
+</script>
+<script>
+    $('.chargement').click(function() {
+    
+         var chargement='<div class="sweet-overlay" tabindex="-1" style="opacity: 1.07; display: block;">'+
+				'<div style="margin-left:auto;margin-right:auto;width:400px;font-size:18px;background-color:white;padding:5px 0px"><center>Chargement en cours, Patienter...</center></div></div>'	   
+         $('body').append(chargement);
+		 
+    });
+	$('.traitement').click(function() {
+         var traitement='<div class="sweet-overlay" tabindex="-1" style="opacity: 1.07; display: block;">'+
+				'<div style="margin-left:auto;margin-right:auto;width:400px;font-size:18px;background-color:white;padding:5px 0px"><center>Traitement en cours, Patienter...</center></div></div>'	   
+         $('body').append(traitement);
+		 
+    });
+</script>
+	{%block autre_script%}
+	{%endblock%}
+</body>
+ 
+</html>

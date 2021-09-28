@@ -1,0 +1,50 @@
+{% extends parent_template %}
+{% load staticfiles %}
+{% load aptusadmin_filter %}
+{%block btn_action%}
+    {%if can_export_permission %} <li><a href="{{request.get_full_path|addname:'export-permissions'}}">Exporter les Permissions</a></li> {%endif%}
+{%endblock%}
+
+{%block main_form%}
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Nom</label>
+            <div class="col-sm-9 bar-left">{{instance.name}}</div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">{{instance|field_verbose_name:"description"}}</label>
+            <div class="col-sm-9 bar-left">{{instance.description|default:"---"}}</div>
+        </div>         
+    
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Permissions</label>
+            <div class="col-sm-9 bar-left"> 
+                {%if instance.get_permissions%}
+                    {%for elt in instance.get_permissions%}
+                        {{elt}} <br>
+                    {%endfor%}
+                {%else%}
+                    ---
+                {%endif%}
+            </div>
+        </div>   
+    </div>  
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Membres du groupe</label>
+            <div class="col-sm-9 bar-left"> 
+                {%if instance.get_utilisateurs %}
+                    {%for elt in instance.get_utilisateurs%}
+                      {{elt.last_name}}  {{elt.first_name}} <br>
+                    {%endfor%}
+                {%else%}
+                    ---
+                {%endif%}
+            </div>
+        </div>   
+    </div>
+    
+    
+     
+    
+{%endblock%}

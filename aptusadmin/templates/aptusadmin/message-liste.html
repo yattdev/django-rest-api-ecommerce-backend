@@ -1,0 +1,26 @@
+{% extends 'aptusadmin/main/list.html' %}
+{% load aptusadmin_filter %}
+{%block filtrate%}{%endblock%}
+{%block btn_add%}{%endblock%}
+{%block table%} 
+    <thead>
+        <tr> 
+            <th id="checkbox-ap" nowrap="nowrap"><input id="select_all" type="checkbox" ></th> 
+            <th nowrap="nowrap" >{{instance|field_verbose_name:"subject" }}</th>
+            <th nowrap="nowrap" >{{instance|field_verbose_name:"date_reception" }}</th> 
+        </tr>  
+    </thead>
+    <tbody  class="searchable">
+        {% for elt in queryset %}
+        <tr>
+            <td nowrap="nowrap" class="checkbox-ap"><input name="Choix[]"   type="checkbox"   value="{{elt.id}}"  class="checkbox"></td> 
+            <td nowrap="nowrap" role="button" onclick='location.href= "{{request.get_full_path|addname:elt.id}}"' >{%if elt.statut == False%}<strong> {{elt.subject|default:""}}</strong>{%else%}{{elt.subject|default:""}}{%endif%}</td>
+            <td nowrap="nowrap" role="button" onclick='location.href= "{{request.get_full_path|addname:elt.id}}"' >{%if elt.statut == False%}<strong> {{elt.date_reception|default:""}}</strong>{%else%}{{elt.date_reception|date:"d/m/Y  H:i"|default:"--------" }}{%endif%}</td>
+        </tr>	
+        {%endfor%}
+    </tbody>
+{%endblock%}
+
+{%block autre_script_liste%}
+   
+{% endblock %}      

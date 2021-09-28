@@ -1,0 +1,100 @@
+{% extends parent_template %}
+{% load staticfiles aptusadmin_filter %}
+
+{% block nave %}
+    <div class="row">
+        {%block filigrane%}<h2 class="title heading-pad-left"><a  href="{{ request.get_full_path|dirname }}">{{ cls|plural_verbose_name }}</a> / Importer</h2>{% endblock %}
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="btn-gr-ap">     
+                <button type="submit" class="btn btn-info" name="action" value="enregistrer" id="enregistrer"><i class="fa fa-save"></i> Enregistrer</button>
+                <a href="{{request.get_full_path|dirname}}" class="btn btn-default"><i class="fa fa-times-circle"></i> Annuler </a> 
+            </div>    
+        </div>
+    </div>
+{% endblock %}
+
+{%block main%} 
+    <div class="ibox-content">
+        {% if messages %}
+            {% for message in messages %}                   
+                <div class="row">
+                    <div class="col-sm-12">			
+                        <div class="alert {{ message.tags }} alert-dismissable" >
+                        {{ message }}<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        </div> 
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row">
+            <form method="post" action="{{ redirect_url }}" class="form-horizontal" id="myform" enctype="multipart/form-data">
+                {% csrf_token %}
+                {%block main_form%}
+                    {% for field in form %}
+                        <div class="form-group col-sm-8" {%if field.name == 'path'%} style="display:none" {%endif%}>
+                            <label class="col-sm-4 control-label">{{ field.label_tag }}</label>
+                            <div class="col-sm-8 bar-left">
+                                {{ field }}
+                                {%if field.errors|striptags  %}
+                                <label style="color:red"  class="error"  >{{field.errors|striptags }}</label>
+                                {%endif%}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endblock main_form %}
+                <div class="form-group  form-cat col-sm-12">
+                    <label class="col-sm-8 control-label">Aperçu du fichier</label>
+                </div>
+                <div class="col-sm-12" >
+                    <table class="table">
+                        <tbody>
+                        {%for i in rows%}
+                            <tr>
+                            {%for j in i%} 
+                                <td>{{j}}</td>
+                            {% endfor %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
+    </div>            
+{% endblock %}
+
+{%block autre_script%}
+    <script>
+        $(document).ready(
+            function() {
+                $("#enregistrer").click(function() {
+                    var traitement = '<div class="sweet-overlay" tabindex="-1" style="opacity: 1.07; display: block;">'+
+                        '<div style="margin-left:auto;margin-right:auto;width:400px;font-size:18px;background-color:white;padding:5px 0px"><center>Traitement en cours, Patienter...</center></div></div>'	   
+                    $('body').append(traitement);
+                    $('#myform').append('<input type="hidden" name="action" value="enregistrer">'); 
+                    $('#myform').submit();
+            });
+        });
+    </script>
+    <script>
+        $("form").on('change', 'select', disable_used_choices);
+        function disable_used_choices() {
+            var selectedOptions = $('select option:selected');
+            $('select option').removeAttr('disabled');
+            selectedOptions.each(function() {
+                var value = this.value;
+                if (value != '') {
+                    var id = $(this).parent('select').attr('id');
+                    var options = $('select:not(#' + id + ') option[value=' + value + ']');
+                    var itemToDisable = $("option:contains('Item '2')");
+                    itemToDisable.attr("disabled",true);
+                    options.attr('disabled', 'disabled');
+                }
+            });
+        }
+        disable_used_choices();
+    </script>
+{%endblock%}

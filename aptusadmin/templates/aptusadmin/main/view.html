@@ -1,0 +1,136 @@
+{% extends "aptusadmin/main/first.html" %}
+{% load aptusadmin_filter %}
+{% block nave %}
+    <div class="row">
+        {%block filigrane%}<h2 class="title heading-pad-left" ><a  href="{{request.get_full_path|dirname}}">{{instance.meta.verbose_name_plural}}</a> / {{instance}}</h2>{%endblock%}
+    </div>
+    <div class="row">
+        <div class="col-sm-10">
+            {%block btn%}
+            {%if can_change or can_add%}
+            <div class="btn-gr-ap">
+                {%block btn_update%}{%if can_change %} <a href="{{request.get_full_path|addname:'update'}}" class="btn btn-outline btn-info"><i class="fa fa-edit"></i> Modifier</a> {%endif%}{%endblock btn_update%}
+                {%block btn_add%}{%if can_add %} <a href="{{request.get_full_path|dirname|addname:'add'}}" class="btn btn-outline btn-info"><i class="fa fa-plus-square"></i> Créer</a> {%endif%}{%endblock btn_add%}
+            </div>
+            {%endif%}
+
+            {%block btn_autre_action%}
+
+            {%endblock btn_autre_action%}
+
+            {%if display_btn_plus%}
+            <div class="btn-gr-ap">
+                <div class="btn-group" id="action" >
+                    <button data-toggle="dropdown"  class="btn btn-outline btn-info dropdown-toggle" type="button"><i class="fa fa-ellipsis-h"></i> Actions  <span class="caret"></span></button>
+                    {%block btn_plus%}
+                    <ul class="dropdown-menu">
+                        {%block btn_action%} {%endblock btn_action%}
+                        {%if can_delete %}
+                        <li><a class="ll" >Supprimer</a></li>
+                        {%endif%}
+                    </ul>
+                    {%endblock btn_plus%}
+                </div>
+            </div>
+            {%endif%}
+            {%endblock btn%}
+        </div>
+        <div class="col-sm-2">
+            {%block pagination%}
+            <div class="pull-right">
+                <span class="step-links">
+                    {% if prev %}
+                    <a href="{{request.get_full_path|dirname|addname:prev.id}}" class="btn btn-pagination" title="Précédent"><strong > <</strong></a>
+                    {%else%}
+                    <a disabled="true" class="btn    btn-pagination"  title=" Précédent"><strong><</strong> </a>
+
+                    {% endif %}
+                    <span class="current">
+                        {% if next %} {{num_instance}} {%else%} {{total_instance}} {% endif %} / {{total_instance}}
+                    </span>
+                    {% if next %}
+                    <div class="btn-group">
+                        <a href="{{request.get_full_path|dirname|addname:next.id}}"  class="btn btn-pagination" title="Suivant"><strong>></strong></a>
+
+                    </div>
+                    {%else%}
+                    <div class="btn-group">
+                        <a disabled="true"   class="btn    btn-pagination"  title="Suivant"><strong>></strong></a>
+
+                    </div>
+                    {% endif %}
+                </span>
+            </div>
+            {%endblock%}
+        </div>
+    </div>
+{% endblock nave %}
+
+{%block main%} 
+    <div class="ibox-content">
+        {% if msg_alert %}
+                <div class="row">
+                    <div class="col-sm-12">			
+                        <div class="alert alert-danger info alert-dismissable" >
+                        {{msg_alert|safe}}<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        </div> 
+                    </div>
+                </div>
+                <br>
+        {% endif %}
+        {% if messages %}
+            {% for message in messages %}                   
+                <div class="row">
+                    <div class="col-sm-12">			
+                        <div class="alert {{ message.tags }} alert-dismissable" >
+                        {{message|safe}}<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        </div> 
+                    </div>
+                </div>
+            {% endfor %}
+            <br>
+        {% endif %}
+        {%block specific_centent%}{%endblock%}
+        <div class="row">
+            <form method="post" action="" class="form-horizontal" id="myform">{% csrf_token %}
+                
+                {%block main_form%}
+                {% endblock %}
+            </form>
+            {%block boite_dialoge%}
+            {% endblock %}
+        </div>
+    </div>    	
+{% endblock main %}
+
+{% block autre_script %}
+
+    {% block autre_script_view %}
+    {% endblock autre_script_view %}
+
+    <script>
+       $(document).ready(function() {
+			$('.ll').click(function() {
+				if ($(this).html()=="Supprimer"){
+                    swal({
+                          title: "Voulez-vous valider la suppression ?",
+                          text: null,
+                          type:null,
+                          confirmButtonText: "Valider",
+                          cancelButtonText: "Annuler",
+                          confirmButtonColor: "#02b6b7",
+                          showCancelButton: true,
+                          closeOnConfirm: true,
+                          showLoaderOnConfirm: false,
+                        },
+                        function(){
+                            
+                            $('#myform').append('<input type="hidden" name="action" value="Supprimer">');
+                            $('#myform').submit()
+                             
+                        });                
+                }
+				});	
+				});
+    </script>
+{%endblock autre_script%}

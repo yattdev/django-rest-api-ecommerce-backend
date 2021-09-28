@@ -1,0 +1,112 @@
+{% extends "aptusadmin/main/first.html" %}
+{% load aptusadmin_filter %}
+{% block nave %}
+    <div class="row">
+        {%block filigrane%}
+        <h2 class="title heading-pad-left">
+            {%if request.get_full_path|basename == 'add'%}
+                <a  href="{{request.get_full_path|dirname}}">{{instance.meta.verbose_name_plural}}</a> /  Nouveau 
+            {%elif request.get_full_path|basename == 'update' %} 
+                <a  href="{{request.get_full_path|dirname|dirname}}">{{instance.meta.verbose_name_plural}}</a> /  <a  href="{{request.get_full_path|dirname}}">{{instance}}</a> / Modification
+            {%else%}
+                <a  href="{{request.get_full_path|dirname}}">{{instance.meta.verbose_name_plural}}</a> / {{instance}}
+            {%endif %}
+        </h2>    
+        {% endblock %}
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="btn-gr-ap">     
+                <button  type="submit" class="btn btn-info" name="action" value="Enregistrer" id="eng"  ><i class="fa fa-save"></i> Enregistrer</button>
+                {%block btn_annuler%}<a href="{{request.get_full_path|dirname}}"  class="btn btn-default"    ><i class="fa fa-times-circle"></i>  Annuler </a>{% endblock %}
+            </div>    
+        </div>
+    </div>
+{% endblock %}
+{%block main%} 
+    <div class="ibox-content">
+        {% if msg_alert %}
+                <div class="row">
+                    <div class="col-sm-12">			
+                        <div class="alert alert-danger info alert-dismissable" >
+                        {{msg_alert|safe}}<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        </div> 
+                    </div>
+                </div>
+                <br>
+        {% endif %}
+        {% if messages %}
+            {% for message in messages %}                   
+                <div class="row">
+                    <div class="col-sm-12">			
+                        <div class="alert {{ message.tags }} alert-dismissable" >
+                        {{message|safe}}<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        </div> 
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {%if form and form.non_field_errors|striptags%} 
+            <div class="row">
+                <div class="col-sm-12">			
+                    <div class="alert alert-danger info alert-dismissable" >
+                        {{form.non_field_errors|striptags}}<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                    </div> 
+                </div>
+            </div>
+        {%endif%}
+        <div class="row">
+            <form method="post" action="" name="origine" class="form-horizontal" id="myform" enctype="multipart/form-data">{% csrf_token %}
+                {%block main_form%}
+                {% endblock %}
+            </form>
+            {%block boite_dialoge%}
+            {% endblock %}
+        </div>
+    </div>    	
+{% endblock %}
+{%block autre_script%}
+    {%block autre_script_form%}
+    {%endblock%}
+    <script>
+        $('body').keypress(function(e){
+        if ((e.keyCode == 10 || e.keyCode == 13) && e.ctrlKey){
+            $("#eng").trigger("click")
+        }
+        });
+    </script>
+    <script>
+    {%if template == 'add'%}  
+        $("#eng").click(function() {
+            $('#myform').append('<input type="hidden" name="action" value="Enregistrer">');
+            $('#myform').submit();  
+        })   
+    {%else%}
+    
+    $(document).ready(function() {
+        $("#eng").click(function() {
+                swal({
+                      title: "Voulez vous valider la modification?",
+                      text: null,
+                      type:null,
+                      confirmButtonText: "Valider",
+                      cancelButtonText: "Annuler",
+                      confirmButtonColor: "#02b6b7",
+                      showCancelButton: true,
+                      closeOnConfirm: true,
+                      showLoaderOnConfirm: false,
+                    },
+                    function(){
+                        
+                        $('#myform').append('<input type="hidden" name="action" value="Enregistrer">');
+                        $('#myform').submit()
+                         
+                    });                
+            });	
+            });
+    
+    
+    {%endif%}                
+	</script>
+
+{%endblock%}

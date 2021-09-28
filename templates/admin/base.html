@@ -1,0 +1,76 @@
+{% extends 'admin/base.html' %}
+{% load i18n %}
+    
+{% block extrahead %}{{ block.super }}
+<style>
+    :root {
+        --primary: #444444;
+        --secondary: #323232;
+        --accent: #3abbc2;
+        --primary-fg: #fff;
+
+        --body-fg: #333;
+        --body-bg: #fff;
+        --body-quiet-color: #666;
+        --body-loud-color: #000;
+
+        --header-color: #3abbc2;
+        --header-branding-color: var(--accent);
+        --header-bg: var(--secondary);
+        --header-link-color: var(--primary-fg);
+
+        --breadcrumbs-fg: #87d1d5;
+        --breadcrumbs-link-fg: var(--body-bg);
+        --breadcrumbs-bg: var(--primary);
+
+        --link-fg: #30a8ae;
+        --link-hover-color: #227478;
+        --link-selected-fg: #46a2a7;
+
+        --hairline-color: #e8e8e8;
+        --border-color: #ccc;
+
+        --error-fg: #ba2121;
+
+        --message-success-bg: #dfd;
+        --message-warning-bg: #ffc;
+        --message-error-bg: #ffefef;
+
+        --darkened-bg: #f8f8f8; /* A bit darker than --body-bg */
+        --selected-bg: #8ee9ee; /* E.g. selected table cells */
+        --selected-row: #c2fafd;
+
+        --button-fg: #fff;
+        --button-bg: var(--primary);
+        --button-hover-bg: #308b90;
+        --default-button-bg: var(--secondary);
+        --default-button-hover-bg: #3abbc2;
+        --close-button-bg: #888; /* Previously #bbb, contrast 1.92 */
+        --close-button-hover-bg: #747474;
+        --delete-button-bg: #ba2121;
+        --delete-button-hover-bg: #a41515;
+
+        --object-tools-fg: var(--button-fg);
+        --object-tools-bg: var(--close-button-bg);
+        --object-tools-hover-bg: var(--close-button-hover-bg);
+    }
+
+</style>
+{% endblock %}
+
+{% block userlinks %}
+{{ block.super }}
+/ <form action="{% url 'set_language' %}" method="post" style="display:inline">{% csrf_token %}
+    <input name="next" type="hidden" value="{{ redirect_to }}">
+    <select name="language" onchange="this.form.submit()">
+        {% get_current_language as LANGUAGE_CODE %}
+        {% get_available_languages as LANGUAGES %}
+        {% get_language_info_list for LANGUAGES as languages %}
+        {% for language in languages %}
+            <option value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+                {{ language.name_local }} ({{ language.code }})
+            </option>
+        {% endfor %}
+    </select>
+</form>
+{% endblock %}

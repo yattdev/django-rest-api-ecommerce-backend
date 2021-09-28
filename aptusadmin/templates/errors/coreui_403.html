@@ -1,0 +1,26 @@
+{%extends current_appli|add:"/main/first.html" %}
+{% load aptusadmin_filter %}
+
+{% block main %}
+
+    <div class="row p-3" style="height: 70vh;">
+        <div class="col-md-12 d-flex justify-content-center">
+            <div class="card p-3 justify-content-center align-items-center" style="max-width: 1200px; flex: 1;">
+                <h4 style="margin-bottom: 50px;">Accès non autorisé. Contacter votre administrateur pour plus d'informations.</h4>
+                <a class="btn btn-primary" style="width: 150px;" href="{{request.META.HTTP_REFERER}}" >
+                    <i class="fa fa-chevron-left"></i> Retour
+                </a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block js %}
+
+    <script>
+        $('#app').css('opacity', '1');
+    </script>
+
+{% endblock %}

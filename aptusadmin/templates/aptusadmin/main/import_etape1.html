@@ -1,0 +1,57 @@
+{% extends "aptusadmin/main/first.html" %}
+{% load staticfiles %}
+{% load aptusadmin_filter %}
+{%block tableau_bord%} class="dropdown active" {%endblock%}
+{% block nave %}
+    <div class="row">
+        {%block filigrane%}<h2 class="title heading-pad-left"><a  href="{{request.get_full_path|dirname}}">{{dirname_str}}</a> / {%if import_str%} {{import_str}} {%else%} Importer {%endif%}</h2>{% endblock %}
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="btn-gr-ap">     
+                <button  type="submit" class="btn btn-info" name="action" value="envoyer" id="envoyer"  ><i class="fa fa-upload"></i> Envoyer</button>
+                <a  href="{{request.get_full_path|dirname}}"  class="btn btn-default"    ><i class="fa fa-times-circle"></i>  Annuler </a> 
+            </div>    
+        </div>
+    </div>
+{% endblock %}
+{%block main%} 
+    <div class="ibox-content">
+        {% if messages %}
+            {% for message in messages %}                   
+                <div class="row">
+                    <div class="col-sm-12">			
+                        <div class="alert {{ message.tags }} alert-dismissable" >
+                        {{ message }}<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        </div> 
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        <div class="row">
+            <form method="post" action="" class="form-horizontal" id="myform" enctype="multipart/form-data">{% csrf_token %}
+                <div class="col-sm-8 ">
+                    <input type="file" name="xlfile" id="xlf"  class="btn btn-default">
+                </div>
+          
+            </form>
+        </div>
+    </div>            
+{% endblock %}
+{%block autre_script%}
+    <script>
+        $(document).ready(
+             function() {
+                 $("#envoyer").click(function() {
+                         var traitement = '<div class="sweet-overlay" tabindex="-1" style="opacity: 1.07; display: block;">'+
+                                         '<div style="margin-left:auto;margin-right:auto;width:400px;font-size:18px;background-color:white;padding:5px 0px"><center>Traitement en cours, Patienter...</center></div></div>'	   
+                         $('body').append(traitement);
+
+                      $('#myform').append('<input type="hidden" name="action" value="envoyer">'); 
+                      $('#myform').submit();
+                       
+
+                 });
+                 });
+    </script>
+{%endblock%}

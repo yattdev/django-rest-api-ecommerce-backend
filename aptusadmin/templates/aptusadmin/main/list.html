@@ -1,0 +1,243 @@
+{% extends "aptusadmin/main/first.html" %}
+{% load humanize %}
+{%block autre_style%}
+{% load aptusadmin_filter %}
+    {% load staticfiles %}
+	<link href="{% static 'aptusadmin/css/aptus-filter.css' %}" rel="stylesheet">
+{% endblock %} 
+{% block nave %}
+    <div class="row">
+        <div class="col-sm-5 heading-pad-left">
+            {%block filigrane%}<h2 class="title " >{%if parent_obj%}<a href="{{request.get_full_path|dirname}}">{{parent_obj}}</a> / {%endif%}{{instance.meta.verbose_name_plural}}</h2>{% endblock %}
+        </div>
+        <div class="col-sm-7">
+            {% if btn_filter_list %}
+                <div class="input-group" style="margin-top:3px">
+                    {%for i in btn_filter_list%}
+                        <a href="{{i.link}}" class="btnCriteria filtre_active" name="filtre_active"><strong>{{i.label}}</strong> <i class="fa fa-times"></i></a>
+                    {%endfor%}
+                </div>
+            {%endif%}
+        </div>	 	
+    </div>
+    {%block all_options%}
+    <div class="row">
+        <div class="col-sm-5">
+        {%block all_btn%}
+            {%if can_add %}
+                <div class="btn-gr-ap">
+                    <a href="{{request.get_full_path|addname:'add'}}" class="btn btn-outline btn-info"  ><i class="fa fa-plus-square"></i> Créer</a> 
+                </div>
+            {%endif%}
+            {%block btn_autre_action%}
+            {%endblock%} 
+            {%if display_btn_plus %}
+                <div class="btn-gr-ap">
+                    <div class="btn-group" id="action" >
+                        <button data-toggle="dropdown"  class="btn btn-outline btn-info dropdown-toggle" type="button"><i class="fa fa-ellipsis-h"></i> Actions <span class="caret"></span></button>
+                        <ul class="dropdown-menu">
+                            {%block actions%}{% endblock %}
+                            {%if can_import%}<li><a href="{{request.get_full_path|addname:'import'}}">Importer...</a></li>{%endif%}
+                            {%if can_export%}<li><a href="{{request.get_full_path|addname:'export'}}">Exporter...</a></li>{%endif%}
+                            {%if can_delete%}<li class="to_show" style="display:none"><a class="ll">Supprimer</a></li>{%endif%}
+                            <li role="separator" class="divider to_hide"></li> 
+                            <li class="to_hide" ><a style="pointer-events:none">Sélectionner des éléments <br> pour afficher plus d’actions</a></li> 
+                        </ul>
+                    </div>
+                </div>
+            {%endif%}
+        {% endblock %}    
+        </div>
+        <div class="col-sm-4">
+        {%block filtrate%}
+            <div class="{%if enable_filter%}input-group{%endif%}">
+                <input class="form-control" type="text" id="recherche" value="" style="border-top:none;border-left:none;border-right:none;" {%block recherche%}{%endblock%}/>
+                {%if enable_filter%}<a  type="button" href="#filtrage" data-toggle="modal" class="input-group-addon" style="border:none;font-size:17px" title="Recherche avancée"><i class="fa fa-search-plus"></i></a>{%endif%}
+            </div>
+        {%endblock%}    
+        </div>
+        {%block pagination%}
+            <div class="col-sm-3">
+                <div class="pull-right">
+                    <span class="step-links">
+                        {% if queryset.has_previous %}
+                        <div class="btn-group">
+                            <a href="{{request.get_full_path|page:1}}"  class="btn btn-default" title="Première"><strong><<</strong></a> 
+                            <a href="{{request.get_full_path|page:queryset.previous_page_number }}"  class="btn    btn-default"  title=" Précédent"  ><strong><</strong> </a>
+                        </div>
+                        {%else%}
+                        <div class="btn-group">
+                            <a class="btn btn-default" disabled="true"  title="Première" ><strong><<</strong> </a> 
+                            <a disabled="true" class="btn    btn-default"  title=" Précédent"><strong><</strong> </a>				 
+                        </div>
+                        {% endif %}
+                        <span class="current">
+                            {% if queryset %} {{first_elt_in_page}} - {{ last_elt_in_page }} sur {{total}} {%else%} 0 - 0 sur 0  {%endif%}
+                        </span>
+                        {% if queryset.has_next %}
+                            <div class="btn-group">
+                                <a href="{{request.get_full_path|page:queryset.next_page_number }}"      class="btn btn-default " title="Suivant"><strong > ></strong></a>
+                                <a href="{{request.get_full_path|page:queryset.paginator.num_pages }}"  class="btn btn-default" title="Dernière"><strong>>></strong></a>
+                            </div>	
+                        {%else%}
+                            <div class="btn-group">
+                                <a disabled="true"   class="btn    btn-default"  title="Suivant"><strong>></strong></a>
+                                <a disabled="true"   class="btn    btn-default"  title="Dernière"><strong>>></strong></a>  
+                            </div>	
+                        {%endif%}
+                    </span>
+                </div>  
+            </div>
+        {%endblock%}
+    </div>
+    {% endblock %}
+{% endblock %} 
+{%block main%} 
+    <div class="ibox-content">
+        {% if msg_alert %}
+                <div class="row">
+                    <div class="col-sm-12">			
+                        <div class="alert alert-danger info alert-dismissable" >
+                        {{msg_alert|safe}}<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        </div> 
+                    </div>
+                </div>
+        {% endif %}
+        {% if messages %}
+            {% for message in messages %}                   
+                <div class="row">
+                    <div class="col-sm-12">			
+                        <div class="alert {{ message.tags }} alert-dismissable" >
+                        {{message|safe}}<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        </div> 
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {%block specific_centent%}{%endblock%}
+        {%block form%} 
+            <div class="table-responsive">
+                
+                <form method="post" action="" id="myform">{% csrf_token %}
+                    <table class="table table-ap table-striped" id="myTable">
+                        {%block table%} 
+                        {%endblock%}
+                    </table>
+                </form> 
+               
+            </div>
+         {%endblock%}
+    </div>
+    <div class="modal inmodal fade" id="filtrage" tabindex="-1" role="dialog"  aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+					<h4 class="modal-title">Recherche avancée...</h4>
+                </div>
+                <form method="get" id="filterform">
+                <div class="modal-body">
+                    <div class="row">
+                    
+                        {%block option_filtrage%}
+                            {%for field in filterform%}
+                                <div class="form-group">
+                                    <label for="contain">{{ field.label_tag }}</label>
+                                    {{ field }}
+                                </div>  
+                            {%endfor%}
+                        {%endblock%}
+                    
+					</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times-circle"></i> Annuler</button>
+                    <button type="submit" class="btn btn-primary re_avan" id="appliquer"><i class="fa fa-check-circle"></i> Appliquer</button>
+                </div>
+                </form>
+			</div>
+        </div>
+    </div>  
+    {%block modal%}
+    {% endblock %}   	
+{% endblock %}
+  
+{%block autre_script%}
+{%block autre_script_liste%}
+{% endblock %}
+    
+    <script>
+       $(document).ready(function() {
+  
+      // Remove empty fields from GET forms
+      // Change 'form' to class or ID of your specific form
+        $("#filterform").submit(function() {
+            $(this).find(":input").filter(function(){ return !this.value; }).attr("disabled", "disabled");
+            return true; // ensure form still submits
+        });        
+        });
+       $(document).ready(function() {
+			$('.ll').click(function() {
+				if ($(this).html()=="Supprimer"){
+                    swal({
+                          title: "Voulez-vous valider la suppression ?",
+                          text: null,
+                          type:null,
+                          confirmButtonText: "Valider",
+                          cancelButtonText: "Annuler",
+                          confirmButtonColor: "#02b6b7",
+                          showCancelButton: true,
+                          closeOnConfirm: true,
+                          showLoaderOnConfirm: false,
+                        },
+                        function(){
+                            
+                            $('#myform').append('<input type="hidden" name="action" value="Supprimer">');
+                            $('#myform').submit()
+                             
+                        });                
+                
+                
+                
+                }
+				});	
+				});
+    </script>
+   	
+    <script type="text/javascript">
+		$(document).ready(function(){
+			$('table').on('change', ':checkbox', function() {
+			if ($('input:checkbox:checked').length > 0){
+                $('.to_show').show();
+                $('.to_hide').hide();
+            }
+            else{
+                $('.to_show').hide();
+                $('.to_hide').show();
+            }
+             
+		});
+		$('#select_all').on('click',function(){
+			if(this.checked){
+				$('.checkbox').each(function(){
+					if ( $(this).is(':visible') ){
+					this.checked = true;}
+				});
+			}
+			else{
+				$('.checkbox').each(function(){
+                this.checked = false;
+				});
+				}
+			});
+			$('.checkbox').on('click',function(){
+				if($('.checkbox:checked').length == $('.checkbox').length){
+					$('#select_all').prop('checked',true);
+				}
+				else{
+					$('#select_all').prop('checked',false);
+				}
+			});
+		});
+	</script>
+{% endblock %}

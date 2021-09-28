@@ -1,0 +1,100 @@
+{% extends parent_template %}
+{% load staticfiles %}
+{% load aptusadmin_filter %}
+{% load humanize %}
+{%block main_form%}
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Identifiant</label>
+            <div class="col-sm-8 bar-left">{{form.username }}
+                {%if  form.username.errors|striptags  %} 
+                    <label style="color:red"  class="error"  >{{form.username.errors|striptags}} </label>
+                {%endif%}
+            </div>
+        </div> 
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Nom</label>
+            <div class="col-sm-8 bar-left">{{form.last_name }}
+            {%if  form.last_name.errors|striptags  %} 
+                    <label style="color:red"  class="error"  >{{  form.last_name.errors|striptags  }} </label>
+                {%endif%}
+            
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Prénom</label>
+            <div class="col-sm-8 bar-left">{{form.first_name }}
+            {%if  form.first_name.errors|striptags  %} 
+                    <label style="color:red"  class="error"  >{{  form.first_name.errors|striptags  }} </label>
+                {%endif%}
+            
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Adresse électronique</label>
+            <div class="col-sm-8 bar-left">{{form.email }}
+            {%if  form.email.errors|striptags  %} 
+                    <label style="color:red"  class="error"  >{{  form.email.errors|striptags  }} </label>
+                {%endif%}
+            
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Compte Google</label>
+            <div class="col-sm-8 bar-left">{{form.google_account }}
+            {%if  form.google_account.errors|striptags  %} 
+                    <label style="color:red"  class="error"  >{{  form.google_account.errors|striptags  }} </label>
+                {%endif%}
+            
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Compte Microsoft</label>
+            <div class="col-sm-8 bar-left">{{form.microsoft_account }}
+            {%if  form.microsoft_account.errors|striptags  %} 
+                    <label style="color:red"  class="error"  >{{  form.microsoft_account.errors|striptags  }} </label>
+                {%endif%}
+            
+            </div>
+        </div>
+
+    </div>
+    <div class="col-sm-6">	
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Actif</label>
+            <div class="col-sm-8 bar-left">{{form.is_active }}
+                {%if  form.is_active.errors|striptags  %}
+                    <label style="color:red"  class="error"  >{{  form.is_active.errors|striptags  }} </label>
+                {%endif%}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Groupes</label>
+            <div class="col-sm-8 bar-left">{{form.groups }}
+            {%if  form.groups.errors|striptags  %} 
+                    <label style="color:red"  class="error"  >{{form.groups.errors|striptags}} </label>
+                {%endif%}
+            </div> 
+        </div>
+    </div>     
+{% endblock %}
+{% block autre_script_form%}
+    <script>
+        $(".select2_demo_2").select2();
+        $(document).ready(
+            function() {
+                $("#verifier_cin").click(function() {
+                var url =  "/educat/select_etudiant/" + $("#id_cin").val();
+                    $.getJSON(url, function(models) {
+                        $("#id_nom").val(models.nom)
+                        $("#id_prenom").val(models.prenom)
+                        $("#id_cne").val(models.cne)
+                        $("#id_code_massar").val(models.code_massar)
+                        $("#id_email").val(models.email)
+                    });
+               
+                 });
+
+            });            
+    </script>
+{% endblock %}

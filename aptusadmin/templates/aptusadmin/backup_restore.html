@@ -1,0 +1,128 @@
+{% extends parent_template %}
+{% load humanize %} 
+{% load aptusadmin_filter %}
+{% load l10n %}
+{%block filtrate%}{%endblock%}
+{%block all_btn%}
+    <form method="post" action="">{% csrf_token %}
+        <div class="btn-gr-ap">
+            <button type="submit" name="action" value="create_backup" class="btn btn-outline btn-info"><i class="fa fa-plus-square"></i> Créer une sauvegarde</button>
+            <a href="#import_backup" data-toggle="modal" class="btn btn-outline btn-info"><i class="glyphicon glyphicon-import"></i> Importer un fichier</a>                        
+        </div>
+    </form>
+{%endblock%}
+{%block table%}                                                                                     
+<thead>
+    <tr> 
+        <th nowrap="nowrap" style="display:none"  class="bar-left">id</th>
+        <th nowrap="nowrap" class="bar-left">Date de création</th> 
+        <th nowrap="nowrap" class="bar-left text-center">Mode de création</th>
+        <th nowrap="nowrap" class="bar-left text-center">Taille </th>
+        <th nowrap="nowrap" class="bar-left text-center">Action</th>
+        <th nowrap="nowrap" style="display:none" class="bar-left text-center">Nom du fichier</th>
+    </tr>  
+</thead>    
+<tbody class="searchable" id="tbody">
+    {% for elt in queryset %}
+        <tr>
+            <td nowrap="nowrap"  style="display:none">{{elt.id}}</td>
+            <td nowrap="nowrap" style="width:20%" >{{elt.creation_date}}</td>
+            <td nowrap="nowrap" style="width:20%" class="text-center">{{elt.get_creation_mode_display}}</td>
+            <td nowrap="nowrap" style="width:20%" class="text-center">{{elt.get_size|intcomma}} {%if elt.get_size%}Ko{%endif%}</td>
+            <td style="width:12%" class="text-center">
+                {%if elt.get_size %}
+                <a href='/backup/{{elt.file}}' class="btn btn-white btn-bitbucket c_download" title="Télécharger"><i class="fa fa-download"></i></a>
+                <button type="button" class="btn btn-white btn-bitbucket c_restore" title="Restaurer"><i class="fa fa-repeat"></i></button>
+                {%endif%}
+                <button type="button" class="btn btn-white btn-bitbucket c_delete" title="Supprimer"><i class="fa fa-trash-o"></i></button>
+            </td>
+            <td nowrap="nowrap" style="width:20%;display:none">{{elt.file}}</td>
+        </tr>
+    {% endfor %}
+</tbody>
+{%endblock%}
+{%block modal%}
+<div class="modal inmodal fade" id="import_backup" tabindex="-1" role="dialog"  aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="post" action="" class="form-horizontal" id="form_import" enctype="multipart/form-data">{% csrf_token %}
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">Importer un fichier de sauvegarde</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Fichier</label>
+                            <div class="col-sm-8 bar-left">
+                                <input type="file" class="form-control" type="text" name="file" />
+                            </div>    
+                        </div>
+                    </div> 
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times-circle"></i> Annuler</button>
+                        <button type="submit" id="import_backup"  class="btn btn-primary traitement" name="action" value="import_backup" ><i class="fa fa-check-circle"></i> Valider</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+{%endblock%}
+
+{%block autre_script_liste%}
+<script> 	
+        $(document).ready(function() {
+            $("#tbody").on('click', '.c_delete', function() {
+                var id=$(this).closest('tr').find('td:first')
+                swal({
+                      title: "Voulez-vous valider la suppression ?",
+                      text: null,
+                      type:null,
+                      confirmButtonText: "Valider",
+                      cancelButtonText: "Annuler",
+                      confirmButtonColor: "#02b6b7",
+                      showCancelButton: true,
+                      closeOnConfirm: true,
+                      showLoaderOnConfirm: false,
+                    },
+                    function(){
+                        $('#myform').append('<input type="hidden" name="action" value="delete_backup">');
+                        $('#myform').append('<input type="hidden" name="id_backup" value="'+id.text()+'">');
+                        $('#myform').submit()
+                         
+                    });
+                
+                });
+                });	
+            $(document).ready(function() {
+            $("#tbody").on('click', '.c_restore', function() {
+                var id=$(this).closest('tr').find('td:first')
+                var file_name = $(this).closest('tr').find('td').eq(1)
+                swal({
+                      title: "Voulez-vous restaurer cette sauvegarde ?",
+                      text: "La sauvegarde du "+file_name.text()+" va être restaurée. Cette operation va supprimer le contenu actuel de la base de données.",
+                      type:"warning",
+                      confirmButtonText: "Valider",
+                      cancelButtonText: "Annuler",
+                      confirmButtonColor: "#02b6b7",
+                      showCancelButton: true,
+                      closeOnConfirm: true,
+                      showLoaderOnConfirm: false,
+                    },
+                    function(){
+                        $('#myform').append('<input type="hidden" name="action" value="restore_backup">');
+                        $('#myform').append('<input type="hidden" name="id_backup" value="'+id.text()+'">');
+                        $('#myform').submit()
+                        var traitement='<div class="sweet-overlay" tabindex="-1" style="opacity: 1.07; display: block;">'+
+                                        '<div style="margin-left:auto;margin-right:auto;width:400px;font-size:18px;background-color:white;padding:5px 0px"><center>Traitement en cours, Patienter...</center></div></div>'	   
+                        $('body').append(traitement);
+                    });
+               
+                });
+                });	
+                
+    </script>       
+{% endblock %}

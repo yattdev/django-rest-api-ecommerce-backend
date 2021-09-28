@@ -1,0 +1,64 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
+<script>
+    var options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        legend: {
+            position: 'top'
+        },
+        title: {
+            display: true,
+            position: "top",
+            text: 'Distribution des clients par genre'
+        },
+        animation: {
+            animateScale: false,
+            animateRotate: true
+        }
+    };
+    window.onload = function () {
+        var ctx = document.getElementById("gender-chart");
+        {% regroup cl.queryset|dictsort:"genre" by get_genre_display as genre_list %}
+        var lineChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: [{% for genre in genre_list %}'{{ genre.grouper }}',{% endfor %}],
+                datasets: [
+                    {
+                        data: [{% for genre in genre_list %}'{{ genre.list|length }}',{% endfor %}],
+                        backgroundColor: ['rgb(255, 113, 136, .6)', 'rgb(22, 86, 174, .6)'],
+                        borderColor: ['rgb(255, 113, 136)', 'rgb(22, 86, 174)']
+                    }
+                ]
+            },
+            options: options
+        });
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+{% block content_title %}{% endblock %}
+    <div class="row" id="charts">
+        <div class="col-sm-4">
+            <canvas id="gender-chart" style="width: 100px !important"></canvas>
+        </div>
+    </div>
+    <style>
+        #charts {
+            padding-bottom: 50px !important;
+        }
+        .col-sm-4 {
+            float: none !important;
+            margin: 0 auto !important;
+            height: 250px;
+        }
+    </style>
+{{ block.super }}
+{% endblock %}

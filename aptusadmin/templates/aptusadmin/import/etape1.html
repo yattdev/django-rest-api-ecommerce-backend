@@ -1,0 +1,65 @@
+{% extends parent_template %}
+{% load staticfiles aptusadmin_filter %}
+
+{% block nave %}
+    <div class="row">
+        {%block filigrane%}<h2 class="title heading-pad-left"><a  href="{{ request.get_full_path|dirname }}">{{ cls|plural_verbose_name }}</a> / Importer</h2>{% endblock %}
+    </div>
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="btn-gr-ap">     
+                <button  type="submit" class="btn btn-info" name="action" value="envoyer" id="envoyer"  ><i class="fa fa-upload"></i> Envoyer</button>
+                <a  href="{{request.get_full_path|dirname}}"  class="btn btn-default"    ><i class="fa fa-times-circle"></i>  Annuler </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{%block main%} 
+    <div class="ibox-content">
+        {% if messages %}
+            {% for message in messages %}                   
+                <div class="row">
+                    <div class="col-sm-12">			
+                        <div class="alert {{ message.tags }} alert-dismissable" >
+                        {{ message }}<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        </div> 
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row">
+            <form method="post" action="{{ redirect_url }}" class="form-horizontal" id="myform" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="col-sm-12" style="display: flex; flex-wrap: wrap; align-items: center;">
+                    <input type="file" name="xlfile" id="xlf"  class="btn btn-default">
+                    {% if excel_template_filename %}
+                        <p style="margin-left: 30px;">
+                            Pour télécharger le modèle de document à importer
+                            <a style="font-weight: bold;" class="text-info" href="/static/educat/excel_templates/{{ excel_template_filename }}">
+                                cliquez ici
+                            </a>
+                        </p>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>            
+{% endblock %}
+
+{%block autre_script%}
+    <script>
+        $(document).ready(
+            function() {
+                $("#envoyer").click(function() {
+                    var traitement = '<div class="sweet-overlay" tabindex="-1" style="opacity: 1.07; display: block;">'+
+                        '<div style="margin-left:auto;margin-right:auto;width:400px;font-size:18px;background-color:white;padding:5px 0px"><center>Traitement en cours, Patienter...</center></div></div>'	   
+                    $('body').append(traitement);
+
+                    $('#myform').append('<input type="hidden" name="action" value="envoyer">'); 
+                    $('#myform').submit();
+            });
+        });
+    </script>
+{%endblock%}

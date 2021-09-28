@@ -1,0 +1,91 @@
+{% extends parent_template %}
+{% load aptusadmin_filter %}
+{%block recherche%}placeholder="Recherche par nom d'utilisateur..."{%endblock%}
+{% block all_btn%}
+
+{%endblock%}
+{%block table%}
+    <thead>
+        <tr> 
+            <th nowrap="nowrap" style="color:white;"  class="bar-left">Utilisateur</th>
+            <th nowrap="nowrap" style="color:white;"  class="bar-left">Type de contenu</th>
+            <th nowrap="nowrap" style="color:white;"  class="bar-left">Contenu</th>
+            <th nowrap="nowrap" style="color:white;"  class="bar-left">Type d'action </th>
+            <th nowrap="nowrap" style="color:white;"  class="bar-left">Message</th>
+            <th nowrap="nowrap" style="color:white;"  class="bar-left">Date</th>
+         </tr>  
+    </thead>
+    <tbody  class="searchable">
+        {% for elt in queryset %}
+        <tr>
+             
+            <td>{{elt.user.last_name}} {{elt.user.first_name}} ({{elt.user}})</td>
+            <td>{{elt.content_type|upper}}</td>
+            <td>{{elt.object_repr}}</td>
+            <td>{{elt|action_flag_verbose_name|upper}}</td>
+            <td>{{elt.change_message}}</td>
+            <td>{{elt.action_time|localize}}</td>
+        </tr>	
+        {%endfor%}
+    </tbody>
+{%endblock%}
+{%block option_filtrage%} 
+    <div class="form-group">
+        <label for="contain">{{ filterform.nom.label }}</label>
+        {{ filterform.nom }}
+    </div>
+    <div class="form-group">
+        <label for="contain">{{ filterform.identifiant.label }}</label>
+        {{ filterform.identifiant }}
+    </div>
+    <div class="form-group">
+        <label for="contain">{{ filterform.type_contenu.label }}</label>
+        {{ filterform.type_contenu }}
+    </div>
+    <div class="form-group">
+        <label for="contain">{{ filterform.contenu.label }}</label>
+        {{ filterform.contenu }}
+    </div>
+    <!--<div class="form-group">
+        <label>Date</label>
+        <div class="input-group date form_date" data-date="" data-date-format="dd/mm/yyyy" data-link-field="dtp_input2" data-link-format="yyyy-mm-dd">
+            {{ filterform.date_min }}
+            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+            <span class="input-group-addon"> entre </span>
+            {{ filterform.date_max}}
+            <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+        </div>
+
+    </div>-->
+    <div class="form-group">
+        <label>Date entre</label>
+        <div class="input-group">
+            {{ filterform.date_min }}
+            <span class="input-group-addon"> et </span>
+            {{ filterform.date_max}}
+        </div>
+    </div>
+{% endblock %}
+{%block autre_script_liste%}
+    <script>
+        $("#recherche").keydown(function(event) {
+        if (event.keyCode == 13) {
+            if ($(this).val() != '') {
+                window.location='?nom='+$(this).val()
+            }
+        }
+        });
+    </script>   
+    <script type="text/javascript">
+        $('.form_date').datetimepicker({
+            language:  'fr',
+            weekStart: 1,
+            todayBtn:  1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            forceParse: 0
+        });
+    </script>
+{% endblock %}      

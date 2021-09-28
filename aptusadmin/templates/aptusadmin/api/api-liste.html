@@ -1,0 +1,74 @@
+{% extends 'aptusadmin/main/first.html' %}
+{% load aptusadmin_filter %}
+{%block recherche%}{%endblock%}
+
+{% block stylesheets %}
+    <style>
+        .api_list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+
+        .api_list .api {
+            width: 250px;
+            border: 1px solid #e5e5e5;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .api_list .api:hover {
+            background-color: #f5f5f5;
+            border-color: #f5f5f5;
+        }
+
+        .api_list .api a {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+        }
+    </style>
+{% endblock stylesheets %}
+
+{% block nave %}
+    <div class="row">
+        <div class="col-sm-12 heading-pad-left">
+            <h2 class="title" style="margin-bottom:8px">APIs</h2>
+        </div>
+    </div>    
+{% endblock %}
+
+{% block main %}
+    <div class="ibox-content">
+        {% if messages %}
+            {% for message in messages %}                   
+                <div class="row">
+                    <div class="col-sm-12">			
+                        <div class="alert {{ message.tags }} alert-dismissable" >
+                        {{message|safe}}<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                        </div> 
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <div class="api_list">
+            {% for api in api_list %}
+                <div class="api" style="margin: 5px;">
+                    <div class="img_cont" style="display: flex; justify-content: center; margin-bottom: 10px;">
+                        <img src="/static/myapps/img/api_icons/{{ api.icon }}" style="width: 80px; margin-left: 5px;" alt=""><br>
+                    </div>
+                    <strong style="color:#2f4050">{{ api.name }}</strong>
+                    <p style="color:#708090">{{ api.function }}</p>
+                    <div>
+                        <a href="{{ api.link }}" class="btn btn-info">
+                            Activer
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock main %}
+
+{% block autre_script %}  {% endblock autre_script %}

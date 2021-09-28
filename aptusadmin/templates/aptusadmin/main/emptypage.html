@@ -1,0 +1,16 @@
+{%extends first_template%}
+{% block nave %}
+<br>
+{% if messages %}
+            {% for message in messages %}                   
+                <div class="row">
+                    <div class="col-sm-12">			
+                        <div class="alert {{ message.tags }} alert-dismissable" >
+                        {{ message }}<button aria-hidden="true" data-dismiss="alert" class="close" type="button"></button>
+                        </div> 
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+{% endblock %}
+ 

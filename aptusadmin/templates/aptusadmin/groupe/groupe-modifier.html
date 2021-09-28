@@ -1,0 +1,70 @@
+{% extends parent_template %}
+{% load staticfiles %}
+{% load aptusadmin_filter %}
+{% load humanize %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{% static 'aptusadmin/libs/dual-listbox/dual-listbox.css' %}">
+
+    <style>
+        .item {
+            color:#333
+        }
+        .multi-wrapper .non-selected-wrapper,.multi-wrapper .selected-wrapper {
+            height:350px;
+        }
+    </style>
+{% endblock stylesheets %}
+   
+{%block main_form%}
+    <div class="col-sm-7">
+        <div class="form-group">
+            <label class="col-sm-4 control-label">Nom</label>
+            <div class="col-sm-8 bar-left">{{form.name }}
+            {%if  form.name.errors|striptags  %} 
+                <label style="color:red"  class="error"  >{{  form.name.errors|striptags  }} </label>
+            {%endif%}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">{{instance|field_verbose_name:"description"}}</label>
+            <div class="col-sm-8 bar-left">{{form.description}}
+            {%if  form.description.errors|striptags  %} 
+                <label style="color:red"  class="error"  >{{  form.description.errors|striptags  }} </label>
+            {%endif%}
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="form-group  form-cat" style="margin-top:20px;margin-bottom:20px">
+        </div>
+    </div>
+    <div class="col-sm-12" style="padding-top:10px">
+        <div class="form-group ">
+            <label class=""></label>
+            <div class="col-sm-12 bar-left">{{form.permissions}}
+            {%if  form.permissions.errors|striptags  %} 
+                <label style="color:red"  class="error"  >{{form.permissions.errors|striptags}} </label>
+            {%endif%}
+            </div>
+        </div>    
+    </div>  
+{% endblock %}
+{% block autre_script_form %}
+    <script src="{% static 'aptusadmin/libs/dual-listbox/dual-listbox.js' %}"></script>
+
+    <script>
+        $(document).ready(function() {
+            let dualListbox = new DualListbox('#id_permissions', {
+                availableTitle: 'Permissions disponibles',
+                selectedTitle: 'Permissions sélectionnées',
+                addButtonText: '>',
+                removeButtonText: '<', addAllButtonText: '>>',
+                removeAllButtonText: '<<',
+            });
+            $(dualListbox.search)
+                .prop('placeholder', 'Filtrer...')
+                .addClass('form-control');
+        });
+    </script>
+{% endblock %}

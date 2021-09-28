@@ -1,0 +1,155 @@
+{% extends parent_template %}
+{% load staticfiles %}
+{% load aptusadmin_filter %}
+{% load humanize %}
+{%block utilisateurs %} class="dropdown_ap active" {%endblock%}
+{%block main_form%}
+<div class="col-sm-6">
+    <div class="form-group">
+        <label class="col-sm-4 control-label">Identifiant</label>
+        <div class="col-sm-8 bar-left">{{form.username }}
+        {%if  form.username.errors|striptags  %} 
+                <label style="color:red"  class="error"  >{{  form.username.errors|striptags  }} </label>
+            {%endif%}
+        
+        </div>
+    </div> 
+    <div class="form-group">
+        <label class="col-sm-4 control-label">Nom</label>
+        <div class="col-sm-8 bar-left">{{form.last_name }}
+        {%if  form.last_name.errors|striptags  %} 
+                <label style="color:red"  class="error"  >{{  form.last_name.errors|striptags  }} </label>
+            {%endif%}
+        
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-4 control-label">Prénom</label>
+        <div class="col-sm-8 bar-left">{{form.first_name }}
+        {%if  form.first_name.errors|striptags  %} 
+                <label style="color:red"  class="error"  >{{  form.first_name.errors|striptags  }} </label>
+            {%endif%}
+        
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-4 control-label">Adresse électronique</label>
+        <div class="col-sm-8 bar-left">{{form.email }}
+        {%if  form.email.errors|striptags  %} 
+                <label style="color:red"  class="error"  >{{  form.email.errors|striptags  }} </label>
+            {%endif%}
+        
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-4 control-label">Compte Google</label>
+        <div class="col-sm-8 bar-left">{{form.google_account }}
+        {%if  form.google_account.errors|striptags  %} 
+                <label style="color:red"  class="error"  >{{  form.google_account.errors|striptags  }} </label>
+            {%endif%}
+        
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-4 control-label">Compte Microsoft</label>
+        <div class="col-sm-8 bar-left">{{form.microsoft_account }}
+        {%if  form.microsoft_account.errors|striptags  %} 
+                <label style="color:red"  class="error"  >{{  form.microsoft_account.errors|striptags  }} </label>
+            {%endif%}
+        
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-4 control-label">Mot de passe</label>
+        {% if perms.myapps.aptusadm %}
+            <div class="col-sm-8 bar-left">
+                <a  href="#modifier_password" data-toggle="modal">Cliquez ici</a><span> pour modifier le mot de passe</span>
+            </div>
+        {% endif %}
+    </div>
+</div>
+<div class="col-sm-6">
+    <div class="form-group">
+        <label class="col-sm-4 control-label">Actif</label>
+        <div class="col-sm-8 bar-left">{{form.is_active }}
+        {%if  form.is_active.errors|striptags  %}
+                <label style="color:red"  class="error"  >{{  form.is_active.errors|striptags  }} </label>
+            {%endif%}
+        
+        </div>
+    </div> 
+    <div class="form-group">
+        <label class="col-sm-4 control-label">Groupes</label>
+        <div class="col-sm-8 bar-left">{{form.groups }}
+        {%if  form.groups.errors|striptags  %} 
+                <label style="color:red"  class="error"  >{{form.groups.errors|striptags}} </label>
+            {%endif%}
+        </div> 
+    </div>
+</div>
+{% endblock %}
+{%block boite_dialoge%}
+    <div class="modal inmodal" id="modifier_password" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-dialog">
+                <div class="modal-content animated fadeIn">
+                    <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                            <h5 class="modal-title">Modifier le mot de passe</h5>
+                    </div>        
+                    <form method="post" action="" class="form-horizontal"  enctype="multipart/form-data">{% csrf_token %}
+                        <div class="modal-body">
+                             <div class="row"  > 
+                              <div class="col-sm-12">
+                                <div class="form-group  ">
+                                    <label class="col-sm-4 control-label">Nouveau mot de passe :</label>
+                                    <div class="col-sm-8 bar-left">
+                                        <input class="form-control" id="id_new_password" name="new_password" required="true" type="password">
+                                    </div>										
+                                </div>	
+                                <div class="form-group  ">
+                                    <label class="col-sm-4 control-label">Confirmation du nouveau mot de passe :</label>
+                                    <div class="col-sm-8 bar-left">
+                                        <input class="form-control" id="id_confirmation_password" name="confirmation_password" required="true" type="password">
+                                    </div>										
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button  type="button" class="btn btn-white" data-dismiss="modal"><i class="fa fa-times-circle"></i> Annuler</button>
+                            <button class="btn btn-primary click" type="submit" name="action" id="enregistrer_password"  value="Enregistrer_password"><strong><i class="fa fa-save"></i> Enregistrer</strong></button>
+                        </div>
+                    </form>    
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+{%block autre_script_form%}
+    <script>
+        jQuery(window).load(function(){
+            {%if instance.is_active == True%} $("#id_est_actif").val("Oui") {%else%} $("#id_est_actif").val("Non") {%endif%}
+        });   
+    </script>  
+    <script>
+        $(".select2_demo_2").select2();
+        $(document).ready(
+            function() {
+                $("#verifier_cin").click(function() {
+                var url =  "/educat/select_etudiant/" + $("#id_cin").val();
+                    $.getJSON(url, function(models) {
+                        $("#id_nom").val(models.nom)
+                        $("#id_prenom").val(models.prenom)
+                        $("#id_cne").val(models.cne)
+                        $("#id_code_massar").val(models.code_massar)
+                        $("#id_email").val(models.email)
+                    });
+               
+                 });
+
+            });            
+    </script>
+
+{%endblock%}

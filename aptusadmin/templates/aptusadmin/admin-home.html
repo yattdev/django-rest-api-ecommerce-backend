@@ -1,0 +1,51 @@
+{% extends "aptusadmin/main/first.html" %}
+{% block nave %}
+    <div class="row">
+        <div class="col-sm-12">
+        <h2 class="title" style="margin-bottom:8px">Console d'administration</h2>
+        </div>
+    </div>    
+{% endblock %}
+{%block main%}
+    <div class="ibox-content">
+        <div class="row" style="display: flex; justify-content: center;">
+            <div class="col-sm-2">
+                <center>
+                    <a href="{%url 'aptusadmin:utilisateurs' %}"><i class="fa fa-user" style="font-size:75px;"></i><br>
+                    <strong style="color:#2f4050">Utilisateurs</strong><br>
+                    <p style="color:#708090">Ajouter, renommer et gérer des comptes utilisateur</p></a>
+                </center> 
+            </div>  
+            <div class="col-sm-2">
+                <center>
+                    <a href="{%url 'aptusadmin:groupes' %}"><i class="fa fa-group" style="font-size:75px;"></i><br>
+                    <strong style="color:#2f4050">Groupes</strong>
+                    <p style="color:#708090">Gérer les groupes</p></a>
+                </center> 
+            </div>
+            <div class="col-sm-2">
+                <center>
+                    <a href="{%url 'aptusadmin:logentry_liste' %}"><i class="fa fa-newspaper-o" style="font-size:75px;"></i><br>
+                    <strong style="color:#2f4050">Journal d'activités</strong>
+                    <p style="color:#708090">Gérer le journal d'activités</p></a>
+                </center> 
+            </div>
+            <div class="col-sm-2">
+                <center>
+                    <a href="{%url 'aptusadmin:backup_restore'%}"><i class="fa fa-database" style="font-size:75px;"></i><br>
+                    <strong style="color:#2f4050">Sauvegarde/restauration</strong>
+                    <p style="color:#708090">Gérer les sauvegardes et restaurations </p></a>
+                </center>
+            </div>
+            {% if show_apis_menu %}
+                <div class="col-sm-2"> 
+                    <center>
+                        <a href="{%url 'aptusadmin:api'%}"><i class="fa fa-exchange" style="font-size:75px;"></i><br>
+                        <strong style="color:#2f4050">APIs</strong>
+                        <p style="color:#708090">Accorder des privilèges de comptes externes à {{ mon_solution }}</p></a>
+                    </center> 
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{%endblock%}

@@ -1,0 +1,27 @@
+{% extends parent_template %}
+{%block tableau_bord%} class="dropdown active" {%endblock%}
+
+{% load humanize %} 
+{% block all_nave %} {%endblock%}
+{%block autre_style%}
+    .top-navigation .wrapper.wrapper-content{padding-top:100px}
+    .title {margin-top:2px;margin-bottom:28px}
+    .active_look{border-left: 2px solid #000; border-right: 2px solid #000; border-top: 2px solid #000;text-align:center}
+    .default_look{border-bottom: 2px solid #000}
+{% endblock %}
+{%block main%}
+<div class="row">
+    <div class="col-sm-9">
+        <h2 class="title" >Alertes</h2>
+    </div>
+    <div class="col-sm-3" style="margin-top:-20px">
+        <h4 class="pull-right" style=";font-weight:500">{% now "l d F Y H:i" %}</h4>
+    </div>
+</div> 
+{%for alert in queryset%}
+    <div class="alert alert-danger alert-dismissable">
+        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+        {{alert.subject}}. {%if alert.alert_link != ''%} <a class="alert-link" href="{{alert.alert_link}}">Plus d'info...</a>{%endif%}
+    </div>
+{%endfor%}
+{% endblock%}

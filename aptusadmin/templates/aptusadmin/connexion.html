@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+{% load static %}
+
+{% comment %}
+    template src: https://codepen.io/khadkamhn/pen/ZGvPLo/?editors=1100
+{% endcomment %}
+
+<html>
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>APTUS Connexion</title>
+    <link rel="icon" type="image/png" href="{% static 'aptusadmin/favicon.png' %}">
+    <link href="{% static 'aptusadmin/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'aptusadmin/font-awesome/css/font-awesome.css' %}" rel="stylesheet">
+
+    <link href="{% static 'aptusadmin/css/animate.css' %}" rel="stylesheet">
+    <link href="{% static 'aptusadmin/css/style.css' %}" rel="stylesheet">
+    {% comment %} <link href="{% static 'aptusadmin/css/connexion-styles.css'%}" rel="stylesheet"> {% endcomment %}
+
+	<style>
+	.btn-primary {background-color: #00cbcc; border-color: #00cbcc;}
+	.btn-primary:hover,
+	.btn-primary:focus,
+	.btn-primary:active,
+	.btn-primary.active,
+	.open .dropdown-toggle.btn-primary,
+	.btn-primary:active:focus,
+	.btn-primary:active:hover,
+	.btn-primary.active:hover,
+	.btn-primary.active:focus {
+	  background-color: #02b6b7;
+	  border-color: #02b6b7;
+}
+	.loginColumns { max-width: 700px;}
+
+    .password-cont {
+        position: relative;
+    }
+    .password-cont input {
+        padding-right: 15px;
+    }
+    .password-cont i {
+        position: absolute;
+        top: 9px;
+        right: 10px;
+        color: #555;
+        font-size: 15px;
+        opacity: 0;
+        transition: .3s;
+    }
+    .password-cont input:hover + i,
+    .password-cont i:hover {
+        opacity: 1;
+    }
+
+	</style>
+
+</head>
+
+<body style="background-color:#686c6d">
+    {% if messages %}
+        {% for message in messages %}                   
+            <div class="row">
+                <div class="col-sm-12">			
+                    <div class="alert {{ message.tags }} alert-dismissable" >
+                    {{message|safe}}<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                    </div> 
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="loginColumns animated fadeInDown">
+         
+            <div class="ibox-content" style="width:60%;margin:auto" >
+
+                <div class="text-center" style="margin-bottom:30px">
+                    <img style="width: 50%" src="/media/img/logo-client.png" alt="logo">
+                </div>
+                 
+                <form class="m-t" method="post" action="">{% csrf_token %}
+                    <div class="form-group">
+                        {{form.username}} 
+                    </div>
+                    <div class="form-group password-cont">
+                        {{form.password}}
+                        <i id="password_eye_toggle" class="fa fa-eye" onclick="toggle_password_visibility()"></i>
+                    </div>
+                    {% if error_message %}
+                        <p style="color:red"><strong>{{error_message}}</strong></p>
+                    {% endif %}
+                    <button type="submit" class="btn btn-primary block full-width m-b">Connexion</button>                                 
+                    <a style="color:#00cbcc; display: block; text-align: center;" href="{% url 'aptusadmin:send_password_reset_link' %}">Mot de passe oublié ?</a>            
+                    <a style="color:#00cbcc; display: block; text-align: center;" href="{% url 'aptusadmin:signup' %}">Créer un compte</a>
+                </form>
+            </div>
+
+        {#<p style="color: #ddd; font-size: 15px; margin-top: 20px; text-align: right; width: 60%;">Powered by <a href="https://aptus.ma"><img src="{% static 'aptusadmin/img/aptusdark.png'%}" alt="Aptus" style="zoom: 15%;"></a></p>#}
+
+    </div>
+        <p style="color: #ddd; font-size: 15px; text-align: right; width: 100%; position: absolute; bottom: 0; left: 0; padding: 5px 10px;">Powered by <a href="https://aptus.ma"><img src="{% static 'aptusadmin/img/logo-aptus.png' %}" alt="Aptus" style="zoom: 15%;"></a></p>
+
+
+
+    {% comment %} <div class="login-wrap">
+            <div class="login-html">
+                <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1" class="tab">Sign In</label>
+                <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">Sign Up</label>
+                <div class="login-form">
+                    <div class="sign-in-htm">
+                        <div class="group">
+                            <label for="user" class="label">Username</label>
+                            <input id="user" type="text" class="input">
+                        </div>
+                        <div class="group">
+                            <label for="pass" class="label">Password</label>
+                            <input id="pass" type="password" class="input" data-type="password">
+                        </div>
+                        <div class="group">
+                            <input id="check" type="checkbox" class="check" checked>
+                            <label for="check"><span class="icon"></span> Keep me Signed in</label>
+                        </div>
+                        <div class="group">
+                            <input type="submit" class="button" value="Sign In">
+                        </div>
+                        <div class="hr"></div>
+                        <div class="foot-lnk">
+                            Powered by Aptus consulting<!-- a href="https://aptusconsulting.ma" target="_blank">Aptus consulting</a-->
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </div> {% endcomment %}
+
+    <script>
+        function toggle_password_visibility() {
+            let icon = document.getElementById('password_eye_toggle');
+            let input = document.getElementById('id_password');
+            if (icon.classList.contains('fa-eye')) {
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+                input.setAttribute('type', 'text');
+            }
+            else {
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+                input.setAttribute('type', 'password');
+            }
+        }
+    </script>
+
+</body>
+</html>

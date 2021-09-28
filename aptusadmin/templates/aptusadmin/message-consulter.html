@@ -1,0 +1,36 @@
+{% extends 'aptusadmin/main/view.html' %}
+{% load staticfiles %}
+{% load aptusadmin_filter %}
+{%block btn%}
+    <div class="btn-gr-ap">
+        <div class="btn-group" id="action" >
+            <button data-toggle="dropdown"  class="btn btn-outline btn-info dropdown-toggle" type="button"><i class="fa fa-ellipsis-h"></i> Plus  <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                <li><a class="ll" >Supprimer</a></li>
+            </ul>
+        </div> 
+    </div>
+{%endblock%}
+{%block main_form%}
+    <div class="col-lg-12 animated fadeInRight">
+        <div class="mail-box-header">
+            <h2>
+                De: {{instance.sender}}
+            </h2>
+            <div class="mail-tools tooltip-demo m-t-md">
+                <h3>
+                    <span class="font-noraml">Sujet: </span>{{instance.subject}}
+                </h3>
+                <h5>
+                    <span class="pull-right font-noraml">{{instance.date_reception}}</span>
+                </h5>
+            </div>
+        </div>
+        <div class="mail-box">
+            <div class="mail-body">
+                 
+                <p>{{instance.content|safe}}</p> 
+            </div>
+        </div>
+    </div>
+{%endblock%}

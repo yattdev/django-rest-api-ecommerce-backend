@@ -1,0 +1,44 @@
+{% extends parent_template %}
+{% load aptusadmin_filter %}
+{%block recherche%}placeholder="Recherche par nom ..."{%endblock%}
+{%block actions%}
+    {%if can_export_permission %}<li><a href="{{request.get_full_path|addname:'export-permissions'}}">Exporter les permissions</a></li>{%endif%}
+    {%if can_import_permission %}<li><a href="{{request.get_full_path|addname:'import-permissions'}}">Importer les permissions</a></li>{%endif%}
+{% endblock %}
+{%block table%}
+    <thead>
+        <tr>
+            <th id="checkbox-ap" nowrap="nowrap"><input id="select_all" type="checkbox" ></th>
+            <th nowrap="nowrap" style="color:white;"  class="bar-left">Nom</th>
+            <th nowrap="nowrap" style="color:white;"  class="bar-left">Description</th>
+         </tr>  
+    </thead>
+    <tbody  class="searchable">
+        {% for elt in queryset %}
+        <tr>
+             
+            <td class="checkbox-ap"nowrap="nowrap"><input name="Choix[]"   type="checkbox"   value="{{elt.id}}"  class="checkbox"></td>
+            <td nowrap="nowrap" role="button" onclick='location.href= "{{request.get_full_path|addname:elt.id}}"'>{{elt}}</td>
+            <td nowrap="nowrap" role="button" onclick='location.href= "{{request.get_full_path|addname:elt.id}}"'>{{elt.description}}</td>
+        </tr>	
+        {%endfor%}
+    </tbody>
+{%endblock%}
+
+{%block autre_script_liste%}
+    <script>
+        $("#recherche").keydown(function(event) {
+        if (event.keyCode == 13) {
+            if ($(this).val() != '') {
+                window.location='?nom='+$(this).val()
+            }
+        }
+        });
+
+        function update_permissions_names() {
+            let form = $("#myform");
+            form.append('<input type="hidden" name="action" value="update_permissions_names">');
+            form.submit();
+        }
+    </script>
+{% endblock %}      
