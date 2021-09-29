@@ -42,7 +42,7 @@ admin.site.site_url = FRONT_END
 
 @admin.register(Categorie)
 class CategorieAdmin(DraggableMPTTAdmin):
-    list_display = ("tree_actions", "indented_title", "view_count", "nb_produits")
+    list_display = ("id", "tree_actions", "indented_title", "view_count", "nb_produits")
     search_fields = ("libelle", )
     list_editable = ("view_count", )
 

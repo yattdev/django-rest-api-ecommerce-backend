@@ -18,9 +18,11 @@ urlpatterns = [
     path("clients/<int:pk>/",
          api_views.ClientDetailUpdateDelete.as_view(),
          name="client_detail_update_delete"),
+    # Fecth all categorie
     path("categories/",
          api_views.CategoriesList.as_view(),
          name="categories_list"),
+    # Fecth categorie by id
     path("categories/<int:pk>/",
          api_views.CategorieDetail.as_view(),
          name="categorie_detail"),
@@ -31,6 +33,7 @@ urlpatterns = [
     path("produits/<int:pk>/",
          api_views.ProduitDetail.as_view(),
          name="produit_detail"),
+    # Fecth produit by categorie
     path("produits/categorie/<int:pk>/",
          api_views.ProduitsCategorie.as_view(),
          name="produits_categorie"),
