@@ -22,18 +22,20 @@ urlpatterns = [
     path("categories/",
          api_views.CategoriesList.as_view(),
          name="categories_list"),
-    # Fecth categorie by id
+    # Fecth categorie by id with enfants categories
     path("categories/<int:pk>/",
          api_views.CategorieDetail.as_view(),
          name="categorie_detail"),
+    # Fecth categorie by id with parent categories
     path("categories2/<int:pk>/",
          api_views.CategorieDetail2.as_view(),
          name="categorie_detail2"),
+    # Fecth all produit
     path("produits/", api_views.ProduitsList.as_view(), name="produits_list"),
     path("produits/<int:pk>/",
          api_views.ProduitDetail.as_view(),
          name="produit_detail"),
-    # Fecth produit by categorie
+    # Fecth all produits by categorie pk:id's given
     path("produits/categorie/<int:pk>/",
          api_views.ProduitsCategorie.as_view(),
          name="produits_categorie"),

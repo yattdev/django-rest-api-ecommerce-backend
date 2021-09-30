@@ -6,10 +6,12 @@ from rest_framework.views import APIView
 from .models import *
 from .serializers import *
 
+
 class ProduitPagination(pagination.PageNumberPagination):
     page_size = 9
     page_size_query_param = 'page_size'
     max_page_size = 9
+
 
 # from rest_framework import permissions
 
@@ -19,37 +21,47 @@ class ProduitPagination(pagination.PageNumberPagination):
 #     def has_object_permission(self, request, view, obj):
 #         return obj.user == request.user
 
+
 # APIs Clients
 class ClientCreateList(generics.ListCreateAPIView):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
 
+
 class ClientDetailUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
+
 
 class CustomUserList(generics.ListAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
 
+
 class CustomUserDetail(generics.RetrieveUpdateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
+
 
 # APIs Produits
 class ProduitsList(generics.ListAPIView):
     def get_queryset(self):
         queryset = Produit.objects.all()
         nouveau = self.request.query_params.get('nouveau')
+
         if nouveau is not None:
             queryset = queryset.filter(nouveau=nouveau)
+
         return queryset
 
     serializer_class = ProduitSerializer
     pagination_class = ProduitPagination
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['nom_produit', 'description_produit', 'categorie__libelle']
+    search_fields = [
+        'nom_produit', 'description_produit', 'categorie__libelle'
+    ]
     ordering_fields = ['prix_produit', 'view_count', 'date_ajout']
+
 
 class ProduitDetail(generics.RetrieveAPIView):
     queryset = Produit.objects.all()
@@ -60,7 +72,9 @@ class ProduitDetail(generics.RetrieveAPIView):
         p.increase_view_count()
         c = p.categorie
         c.increase_view_count()
+
         return Response(self.get_serializer(p).data)
+
 
 class ProduitAjouter(generics.CreateAPIView):
     queryset = Produit.objects.all()
@@ -69,9 +83,11 @@ class ProduitAjouter(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
 
+
 class FichiersProduitList(generics.ListAPIView):
     queryset = FichierProduit.objects.all()
     serializer_class = FichierProduitSerializer
+
 
 class FichierProduitDetail(generics.RetrieveAPIView):
     queryset = FichierProduit.objects.all()
@@ -80,12 +96,14 @@ class FichierProduitDetail(generics.RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
+
 class FichierProduitAjouter(generics.CreateAPIView):
     queryset = Produit.objects.all()
     serializer_class = FichierProduitSerializer
 
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
+
 
 # APIs Categorie
 class CategoriesList(generics.ListAPIView):
@@ -97,12 +115,14 @@ class CategoriesList(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
+
 class CategorieDetail(generics.RetrieveAPIView):
     queryset = Categorie.objects.all()
     serializer_class = CategorieSerializer2
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
+
 
 class CategorieDetail2(generics.RetrieveAPIView):
     queryset = Categorie.objects.all()
@@ -111,6 +131,7 @@ class CategorieDetail2(generics.RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
+
 # API Produits par Categorie
 class ProduitsCategorie(generics.ListAPIView):
     def get_queryset(self):
@@ -118,6 +139,7 @@ class ProduitsCategorie(generics.ListAPIView):
         categorie = Categorie.objects.get(id=id)
         categorie.get_family_tree(categorie)
         categories = categorie.child_categories
+
         return Produit.objects.filter(categorie__in=categories)
 
     serializer_class = ProduitSerializer
@@ -128,7 +150,9 @@ class ProduitsCategorie(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         c = Categorie.objects.get(id=self.kwargs["pk"])
         c.increase_view_count()
+
         return super().get(request, *args, **kwargs)
+
 
 # APIs Paniers
 class AjouterAuPanier(generics.CreateAPIView):
@@ -138,6 +162,7 @@ class AjouterAuPanier(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
 
+
 class SupprimerDuPanier(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ProduitPanierSerializer2
@@ -145,6 +170,7 @@ class SupprimerDuPanier(generics.DestroyAPIView):
 
     def delete(self, request, *args, **kwargs):
         return super().delete(request, *args, **kwargs)
+
 
 class NewPanier(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
@@ -154,15 +180,15 @@ class NewPanier(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         user_id = request.data.get("client")
         user = generics.get_object_or_404(CustomUser, id=user_id)
-        Client.objects.create(
-            customuser_ptr=user, 
-            first_name=user.first_name, 
-            last_name=user.last_name, 
-            email=user.email, 
-            username=user.username, 
-            password=user.password
-        )
+        Client.objects.create(customuser_ptr=user,
+                              first_name=user.first_name,
+                              last_name=user.last_name,
+                              email=user.email,
+                              username=user.username,
+                              password=user.password)
+
         return super().create(request, *args, **kwargs)
+
 
 class PanierDetail(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
@@ -172,6 +198,7 @@ class PanierDetail(generics.RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
+
 class PorduitPanierDetail(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ProduitPanierSerializer2
@@ -179,6 +206,7 @@ class PorduitPanierDetail(generics.RetrieveAPIView):
 
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
+
 
 class PorduitPanierModifier(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
@@ -188,23 +216,29 @@ class PorduitPanierModifier(generics.UpdateAPIView):
     def put(self, request, *args, **kwargs):
         return super().put(request, *args, **kwargs)
 
+
 # APIs Commandes
 class NewCommade(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Commande.objects.all()
     serializer_class = CommandeSerializer2
 
+
 class AjouterProduitCommande(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = ProduitCommande.objects.all()
     serializer_class = ProduitCommmandeSerializer2
 
+
 class CommandesClient(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = CommandeSerializer
+
     def get_queryset(self):
         queryset = Commande.objects.filter(client=self.kwargs["pk"])
+
         return queryset
+
 
 # APIs Notes de recommandation
 class AjouterNote(generics.CreateAPIView):
@@ -215,6 +249,7 @@ class AjouterNote(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
 
+
 class NotesList(generics.ListAPIView):
     queryset = NoteDeRecommandation.objects.all()
     serializer_class = NoteSerializer
@@ -222,11 +257,15 @@ class NotesList(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
+
 # API Notes d'un produit
 class NotesProduit(generics.ListAPIView):
     def get_queryset(self):
-        queryset = NoteDeRecommandation.objects.filter(produit_commente=self.kwargs["pk"])
+        queryset = NoteDeRecommandation.objects.filter(
+            produit_commente=self.kwargs["pk"])
+
         return queryset
+
     serializer_class = NoteSerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['date']
@@ -243,11 +282,14 @@ class ContactUs(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
 
+
 # Site settings
 class ImageSliderListe(generics.ListCreateAPIView):
     queryset = ImageSlider.objects.all()
     serializer_class = ImageSliderSerializer
 
+
 class SiteSettingsDetail(APIView):
     def get(self, request):
-        return Response(SiteSettingsSerializer(SiteSettings.getInstance()).data)
+        return Response(
+            SiteSettingsSerializer(SiteSettings.getInstance()).data)
