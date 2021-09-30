@@ -154,8 +154,8 @@ DJOSER = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST_USER = 'oregonenew@gmail.com'  # in order to aptusadmin email verification to work
-EMAIL_HOST_PASSWORD = '7678_gmail'  # in order to aptusadmin email verification to work
+EMAIL_HOST_USER = ''  # in order to aptusadmin email verification to work
+EMAIL_HOST_PASSWORD = ''  # in order to aptusadmin email verification to work
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
