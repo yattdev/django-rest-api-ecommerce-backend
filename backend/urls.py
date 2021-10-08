@@ -26,6 +26,13 @@ urlpatterns = [
     # url(r'^auth/', include('djoser.urls.jwt')),
     url(r'^auth/', include('djoser.urls')),
     url(r'^auth/', include('djoser.urls.authtoken')),
+    #  Authentication with rest_framework
+    path('auth/rest-auth/', include('rest_framework.urls')), # new
+    #  Authentication with dj-rest-framework
+    #  path('auth/dj-rest-auth/', include('dj_rest_auth.urls')), # new
+    #  Registration with dj-rest-framework
+    path('auth/signup',
+         include('dj_rest_auth.registration.urls')), # new
     path('i18n/', include('django.conf.urls.i18n')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

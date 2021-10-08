@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import os
 from pathlib import Path
+from corsheaders.defaults import default_methods
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,16 +44,16 @@ INSTALLED_APPS = [
     # 3rd party lib
     # *** Registration endpoint
     'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'dj_rest_auth.registration',
 
     'corsheaders',  # Changed line (46->41), Allow/Add CORS to Request/Response
     'rest_framework',
     'rest_framework.authtoken',
-    'dj_rest_auth', # for logIn, LogOut 
     'djoser',
+    'dj_rest_auth', # for logIn, LogOut 
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'dj_rest_auth.registration',
     'mptt',
     'ckeditor',
     'colorfield',
@@ -148,11 +150,11 @@ USE_TZ = True
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-    'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS':
     'rest_framework.pagination.PageNumberPagination',
@@ -195,13 +197,13 @@ CORS_ALLOWED_ORIGINS = [
 # from corsheaders.defaults import default_headers
 # to keep up to date with any future changes
 #
-# CORS_ALLOW_METHODS = list(default_methods) + [
+CORS_ALLOW_METHODS = list(default_methods) + [
 #  "POKE",
-#  ]
+]
 #
-#  CORS_ALLOW_HEADERS = list(default_headers) + [
-#  "my-custom-header",
-#  ]
+CORS_ALLOW_HEADERS = list(default_headers) + [
+"my-custom-header",
+]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'

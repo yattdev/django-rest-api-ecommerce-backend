@@ -1,4 +1,7 @@
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import ( IsAuthenticated,
+                                        AllowAny,
+                                        IsAuthenticatedOrReadOnly,
+                                        )
 from rest_framework import generics, filters, pagination
 from rest_framework.response import Response
 from django.http import JsonResponse

@@ -4,8 +4,6 @@ from e_commerce import api_views
 from e_commerce import views
 
 urlpatterns = [
-    path('api/v1/', include('djoser.urls')),
-    path('api/v1/', include('djoser.urls.authtoken')),
     path("custom_users/",
          api_views.CustomUserList.as_view(),
          name="custom_users_list"),
@@ -93,6 +91,5 @@ urlpatterns = [
 urlpatterns += [
     path('produits/search/', api_views.search),
     path('signup/', api_views.CreateClientView.as_view()),
-    path('api-auth/', include('dj_rest_auth.registration.urls')), # new
-    path('api-auth/', include('dj_rest_auth.urls')), # new
+    path('get-token/', api_views.get_csrf_token) # to get csrf_token 
 ]
