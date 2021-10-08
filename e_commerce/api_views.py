@@ -56,6 +56,7 @@ class ProduitsList(generics.ListAPIView):
 
         return queryset
 
+    permission_classes = (IsAuthenticatedOrReadOnly, )
     serializer_class = ProduitSerializer
     pagination_class = ProduitPagination
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
@@ -65,8 +66,9 @@ class ProduitsList(generics.ListAPIView):
     ordering_fields = ['prix_produit', 'view_count', 'date_ajout']
 
 
-class ProduitDetail(generics.RetrieveAPIView):
+class ProduitDetail(generics.ListCreateAPIView):
     queryset = Produit.objects.all()
+    permission_classes = (IsAuthenticatedOrReadOnly, )
     serializer_class = ProduitSerializer
 
     def get(self, request, *args, **kwargs):
@@ -158,7 +160,7 @@ class ProduitsCategorie(generics.ListAPIView):
 
 # APIs Paniers
 class AjouterAuPanier(generics.CreateAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
     serializer_class = ProduitPanierSerializer2
 
     def create(self, request, *args, **kwargs):
@@ -166,7 +168,7 @@ class AjouterAuPanier(generics.CreateAPIView):
 
 
 class SupprimerDuPanier(generics.DestroyAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
     serializer_class = ProduitPanierSerializer2
     queryset = ProduitPanier.objects.all()
 
@@ -175,7 +177,7 @@ class SupprimerDuPanier(generics.DestroyAPIView):
 
 
 class NewPanier(generics.CreateAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
     serializer_class = PanierSerializer3
     queryset = Panier.objects.all()
 
@@ -193,7 +195,7 @@ class NewPanier(generics.CreateAPIView):
 
 
 class PanierDetail(generics.RetrieveAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
     serializer_class = PanierSerializer2
     queryset = Panier.objects.all()
 
@@ -202,7 +204,7 @@ class PanierDetail(generics.RetrieveAPIView):
 
 
 class PorduitPanierDetail(generics.RetrieveAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
     serializer_class = ProduitPanierSerializer2
     queryset = ProduitPanier.objects.all()
 
@@ -211,7 +213,7 @@ class PorduitPanierDetail(generics.RetrieveAPIView):
 
 
 class PorduitPanierModifier(generics.UpdateAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
     serializer_class = ProduitPanierSerializer2
     queryset = ProduitPanier.objects.all()
 
@@ -221,19 +223,19 @@ class PorduitPanierModifier(generics.UpdateAPIView):
 
 # APIs Commandes
 class NewCommade(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
     queryset = Commande.objects.all()
     serializer_class = CommandeSerializer2
 
 
 class AjouterProduitCommande(generics.ListCreateAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
     queryset = ProduitCommande.objects.all()
     serializer_class = ProduitCommmandeSerializer2
 
 
 class CommandesClient(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
     serializer_class = CommandeSerializer
 
     def get_queryset(self):
@@ -244,7 +246,7 @@ class CommandesClient(generics.ListAPIView):
 
 # APIs Notes de recommandation
 class AjouterNote(generics.CreateAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated, )
     queryset = NoteDeRecommandation.objects.all()
     serializer_class = NoteSerializer2
 
@@ -313,9 +315,8 @@ def search(request):
         return Response({'produits': []})
 
 class CreateClientView(generics.CreateAPIView):
-
+    permission_classes = (
+        IsAuthenticated, # Or anon users can't register
+    )
     model = Client
-    permission_classes = [
-        AllowAny # Or anon users can't register
-    ]
     serializer_class = ClientSerializer
