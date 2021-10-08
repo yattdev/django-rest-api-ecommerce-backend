@@ -89,6 +89,10 @@ urlpatterns = [
          name="site_settings"),
 ]
 
+# Set by Yattara
 urlpatterns += [
-    path('', views.HomeTemplatePage.as_view(), name='home'),
+    path('produits/search/', api_views.search),
+    path('signup/', api_views.CreateClientView.as_view()),
+    path('api-auth/', include('dj_rest_auth.registration.urls')), # new
+    path('api-auth/', include('dj_rest_auth.urls')), # new
 ]

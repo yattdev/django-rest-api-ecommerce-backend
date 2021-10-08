@@ -51,7 +51,7 @@ class ProduitSerializer2(serializers.ModelSerializer):
     class Meta:
         model = Produit
         fields = ("id", "nom_produit", "prix_produit", "categorie",
-                  "fichierproduit_set", "nouveau")
+                  "fichierproduit_set", "nouveau", "qte_stock")
 
 
 class ProduitSerializer(serializers.ModelSerializer):
@@ -145,7 +145,7 @@ class PanierSerializer3(serializers.ModelSerializer):
 
 class ClientSerializer(serializers.ModelSerializer):
     panier = PanierSerializer2(read_only=True)
-
+    password = serializers.CharField(write_only=True)
     # num_cart = serializers.CharField()
     # code_sec = serializers.CharField()
     # date_expiration = serializers.CharField()
@@ -166,6 +166,7 @@ class ClientSerializer(serializers.ModelSerializer):
             "adresse",
             "panier",
             "tel",
+            "password",
             # "num_cart", "code_sec", "date_expiration"
         )
 
@@ -185,6 +186,16 @@ class ClientSerializer(serializers.ModelSerializer):
     #         if i < 2: number += "*"
     #         else: number += obj.code_sec[i]
     #     return number
+
+    def create(self, validated_data):
+
+        user = Client.objects.create_user(
+            email=validated_data['email'],
+            username=validated_data['username'],
+            password=validated_data['password'],
+        )
+
+        return user
 
 
 class PanierSerializer(serializers.ModelSerializer):

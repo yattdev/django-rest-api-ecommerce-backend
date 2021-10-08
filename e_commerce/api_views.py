@@ -1,7 +1,9 @@
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import generics, filters, pagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
+from django.db.models import Q
 
 from .models import *
 from .serializers import *
@@ -13,7 +15,7 @@ class ProduitPagination(pagination.PageNumberPagination):
     max_page_size = 9
 
 
-# from rest_framework import permissions
+#  from rest_framework import permissions
 
 # class IsCurrentUser(permissions.BasePermission):
 #     message = 'Adding customers not allowed.'
@@ -293,3 +295,27 @@ class SiteSettingsDetail(APIView):
     def get(self, request):
         return Response(
             SiteSettingsSerializer(SiteSettings.getInstance()).data)
+
+# ******* Set By yattara ********
+#  Add search fonctionnality
+@api_view(['POST'])
+def search(request):
+    query = request.data.get('query', '')
+
+    if query:
+        produits = Produit.objects.filter(
+            Q(nom_produit__icontains=query)
+            | Q(description_produit__icontains=query))
+        serializer = ProduitSerializer(produits, many=True)
+
+        return Response(serializer.data)
+    else:
+        return Response({'produits': []})
+
+class CreateClientView(generics.CreateAPIView):
+
+    model = Client
+    permission_classes = [
+        AllowAny # Or anon users can't register
+    ]
+    serializer_class = ClientSerializer

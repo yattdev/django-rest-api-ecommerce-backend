@@ -38,17 +38,31 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'aptusadmin',
-    'e_commerce',
+
+    # 3rd party lib
+    # *** Registration endpoint
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'dj_rest_auth.registration',
+
+    'corsheaders',  # Changed line (46->41), Allow/Add CORS to Request/Response
     'rest_framework',
     'rest_framework.authtoken',
-    'corsheaders',
+    'dj_rest_auth', # for logIn, LogOut 
     'djoser',
     'mptt',
     'ckeditor',
     'colorfield',
     'multiselectfield',
+
+    # local
+    'aptusadmin',
+    'e_commerce',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -133,8 +147,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES':
-    ('rest_framework.authentication.TokenAuthentication', ),
+    'DEFAULT_PERMISSION_CLASSES': [
+    'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
     'DEFAULT_PAGINATION_CLASS':
     'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE':
@@ -153,20 +172,36 @@ DJOSER = {
     'PASSWORD_RESET_CONFIRM_RETYPE': True,
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#  EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' # for gmail
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' # new
 EMAIL_HOST_USER = ''  # in order to aptusadmin email verification to work
 EMAIL_HOST_PASSWORD = ''  # in order to aptusadmin email verification to work
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-FRONT_END = "http://localhost:3000"
+FRONT_END = [
+    "http://localhost:3000",
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
+]
 
+#  CORS_URLS_REGEX = r"^/api/.*$"
 CORS_ALLOWED_ORIGINS = [
-    FRONT_END,
     "http://localhost:8000",
     "http://127.0.0.1:8000",
-]
+] + FRONT_END
+# from corsheaders.defaults import default_methods
+# from corsheaders.defaults import default_headers
+# to keep up to date with any future changes
+#
+# CORS_ALLOW_METHODS = list(default_methods) + [
+#  "POKE",
+#  ]
+#
+#  CORS_ALLOW_HEADERS = list(default_headers) + [
+#  "my-custom-header",
+#  ]
 
 STATIC_URL = '/static/'
 

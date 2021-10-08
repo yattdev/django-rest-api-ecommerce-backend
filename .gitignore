@@ -5,3 +5,4 @@ env/
 monSite/
 jimweb/jimapp/templates/jimapp/brouillons
 rasa-webchat
+*produits/

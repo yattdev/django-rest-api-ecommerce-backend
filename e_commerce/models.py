@@ -61,6 +61,7 @@ class Client(CustomUser):
     image.allow_tags = True
 
 
+
 class Categorie(MPTTModel):
     class Meta:
         verbose_name = 'Categorie'
