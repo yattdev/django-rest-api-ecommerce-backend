@@ -203,7 +203,22 @@ CORS_ALLOWED_ORIGINS = [
 #  "my-custom-header",
 #  ]
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+if not DEBUG:
+    STATICFILES_DIRS = [
+        os.path.join(STATIC_ROOT, 'css/'),
+        os.path.join(STATIC_ROOT, 'js/'),
+        os.path.join(STATIC_ROOT, 'img/')
+    ]
+
+# TODO: Create 3 diff settings for (dev, prod, 3rd-party librairies)
+# 3rd-party configuation
 
 BACKEND_URL = "http://localhost:8000"
 
