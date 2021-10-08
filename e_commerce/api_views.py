@@ -1,9 +1,11 @@
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import generics, filters, pagination
 from rest_framework.response import Response
+from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from django.db.models import Q
+from django.middleware import csrf
 
 from .models import *
 from .serializers import *
@@ -320,3 +322,8 @@ class CreateClientView(generics.CreateAPIView):
     )
     model = Client
     serializer_class = ClientSerializer
+
+#  Return CSRF token
+def get_csrf_token(request):
+    token = csrf.get_token(request)
+    return JsonResponse({'csrf_token': token})
